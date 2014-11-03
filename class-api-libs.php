@@ -3,6 +3,13 @@
 /**
  * Include this class to use the Yoast_Api_Libs, you can include this as a submodule in your project
  * and you just have to autoload this class
+ *
+ *
+ * NAMING CONVENTIONS
+ * - Register 'oauth' by using $this->register_api_library()
+ * - Create folder 'oauth'
+ * - Create file 'class-api-oauth.php'
+ * - Class name should be 'Yoast_Api_Oauth'
  */
 
 if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
