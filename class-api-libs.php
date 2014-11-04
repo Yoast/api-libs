@@ -21,15 +21,28 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 		 *
 		 * @var array
 		 */
-		private $api_libs = array();
+		private static $api_libs = array();
 
 		/**
-		 * Construct the API Libs
+		 * Store the instances of the API class
+		 *
+		 * @var array
 		 */
-		public function __construct() {
-			$this->register_api_libs();
+		private static $instances = array();
 
-			$this->load_classes();
+		/**
+		 * Call this method to init the libraries you need
+		 *
+		 * @param array $libraries
+		 */
+		public static function load_api_libraries( $libraries = array() ) {
+			if ( is_array( $libraries ) && count( $libraries ) >= 1 ) {
+				foreach ( $libraries as $lib ) {
+					self::register_api_library( $lib );
+				}
+			}
+
+			print_r( self::get_api_libs() );
 		}
 
 		/**
@@ -37,15 +50,8 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 		 *
 		 * @return array
 		 */
-		public function get_api_libs() {
-			return $this->api_libs;
-		}
-
-		/**
-		 * Init function and register the API libraries
-		 */
-		private function register_api_libs() {
-			$this->register_api_library( 'oauth' );
+		public static function get_api_libs() {
+			return self::$api_libs;
 		}
 
 		/**
@@ -55,25 +61,28 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 		 *
 		 * @return bool
 		 */
-		private function register_api_library( $name ) {
-			$name             = strtolower( $name );
-			$this->api_libs[] = $name;
-			$classname        = 'Yoast_Api_' . ucfirst( $name );
-			$classpath        = 'class-api-' . $name . '.php';
+		private static function register_api_library( $name ) {
+			$name      = strtolower( $name );
+			$classname = 'Yoast_Api_' . ucfirst( $name );
+			$classpath = 'class-api-' . $name . '.php';
+
+			self::$api_libs[$name] = array(
+				'name'      => $name,
+				'classname' => $classname,
+				'classpath' => $classpath,
+			);
 
 			if ( file_exists( $name . '/' . $classpath ) ) {
 				require_once( $name . '/' . $classpath );
 
 				if ( class_exists( $classname ) ) {
-					$this->$name = new $classname;
+					self::$instances->$name = new $classname;
 
 					return true;
 				}
-
-				return false;
-			} else {
-				return false;
 			}
+
+			return false;
 		}
 
 	}
