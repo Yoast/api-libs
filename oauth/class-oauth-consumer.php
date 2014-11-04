@@ -12,3 +12,4 @@ class Yoast_OAuthConsumer {
 	function __toString() {
 		return "Yoast_OAuthConsumer[key=$this->key,secret=$this->secret]";
 	}
+}
