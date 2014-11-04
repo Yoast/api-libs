@@ -34,19 +34,34 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 		 * Call this method to init the libraries you need
 		 *
 		 * @param array $libraries
+		 *
+		 * @return bool True when at least 1 library is registered, False when there was 1 failure or when there is no class loaded at all
 		 */
 		public static function load_api_libraries( $libraries = array() ) {
+			$succeeded = 0;
+			$failed    = 0;
+
 			if ( is_array( $libraries ) && count( $libraries ) >= 1 ) {
 				foreach ( $libraries as $lib ) {
-					self::register_api_library( $lib );
+					if ( self::register_api_library( $lib ) ) {
+						$succeeded ++;
+					} else {
+						$failed ++;
+					}
 				}
 			}
 
 			print_r( self::get_api_libs() );
+
+			if ( $succeeded >= 1 && $failed == 0 ) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		/**
-		 * Get the registerd API libraries
+		 * Get the registered API libraries
 		 *
 		 * @return array
 		 */
