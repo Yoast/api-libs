@@ -100,6 +100,19 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 			return false;
 		}
 
+		/**
+		 * Execute a call with this method
+		 *
+		 * @param       $instance
+		 * @param       $method
+		 * @param array $params
+		 */
+		public static function do_call( $instance, $method, $params = array() ){
+			$class = self::$instances->$instance;
+
+			$class->$method($params);
+		}
+
 	}
 
 }
