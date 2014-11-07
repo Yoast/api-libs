@@ -1,4 +1,5 @@
 <?php
+
 class Yoast_OAuthDataStore {
 	function lookup_consumer( $consumer_key ) {
 		// implement me

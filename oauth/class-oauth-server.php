@@ -1,4 +1,5 @@
 <?php
+
 class Yoast_OAuthServer {
 	protected $timestamp_threshold = 300; // in seconds, five minutes
 	protected $version = '1.0'; // hi blaine

@@ -1,4 +1,5 @@
 <?php
+
 class Yoast_OAuthUtil {
 	public static function urlencode_rfc3986( $input ) {
 		if ( is_array( $input ) ) {

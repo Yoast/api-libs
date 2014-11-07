@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The PLAINTEXT method does not provide any security protection and SHOULD only be used
  * over a secure channel such as HTTPS. It does not use the Signature Base String.

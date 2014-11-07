@@ -1,4 +1,5 @@
 <?php
+
 class Yoast_OAuthConsumer {
 	public $key;
 	public $secret;

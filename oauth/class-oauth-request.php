@@ -1,4 +1,5 @@
 <?php
+
 class Yoast_OAuthRequest {
 	protected $parameters;
 	protected $http_method;

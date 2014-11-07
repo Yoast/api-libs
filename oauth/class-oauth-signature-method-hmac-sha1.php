@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The HMAC-SHA1 signature method uses the HMAC-SHA1 signature algorithm as defined in [RFC2104]
  * where the Signature Base String is the text and the key is the concatenated values (each first

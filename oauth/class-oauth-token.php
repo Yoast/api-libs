@@ -1,4 +1,5 @@
 <?php
+
 class Yoast_OAuthToken {
 	// access tokens and request tokens
 	public $key;

@@ -1,8 +1,9 @@
 <?php
+
 /**
-* A class for implementing a Signature Method
-* See section 9 ("Signing Requests") in the spec
-*/
+ * A class for implementing a Signature Method
+ * See section 9 ("Signing Requests") in the spec
+ */
 abstract class Yoast_OAuthSignatureMethod {
 	/**
 	 * Needs to return the name of the Signature Method (ie HMAC-SHA1)
