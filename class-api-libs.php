@@ -51,8 +51,6 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 				}
 			}
 
-			print_r( self::get_api_libs() );
-
 			if ( $succeeded >= 1 && $failed == 0 ) {
 				return true;
 			} else {
@@ -77,21 +75,25 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 		 * @return bool
 		 */
 		private static function register_api_library( $name ) {
-			$name      = strtolower( $name );
-			$classname = 'Yoast_Api_' . ucfirst( $name );
-			$classpath = 'class-api-' . $name . '.php';
+			$name            = strtolower( $name );
+			$classname       = 'Yoast_Api_' . ucfirst( $name );
+			$classpath       = 'class-api-' . $name . '.php';
+			$path_to_require = dirname( __FILE__ ) . '/' . $name . '/' . $classpath;
 
 			self::$api_libs[$name] = array(
-				'name'      => $name,
-				'classname' => $classname,
-				'classpath' => $classpath,
+				'name'            => $name,
+				'classname'       => $classname,
+				'classpath'       => $classpath,
+				'path_to_require' => $path_to_require,
 			);
 
-			if ( file_exists( $name . '/' . $classpath ) ) {
-				require_once( $name . '/' . $classpath );
+			if ( file_exists( $path_to_require ) ) {
+				include( $path_to_require );
 
 				if ( class_exists( $classname ) ) {
-					self::$instances->$name = new $classname;
+					$instance = new $classname;
+
+					self::$instances[$name] = $instance;
 
 					return true;
 				}
@@ -107,10 +109,11 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 		 * @param       $method
 		 * @param array $params
 		 */
-		public static function do_call( $instance, $method, $params = array() ){
-			$class = self::$instances->$instance;
+		public static function do_call( $instance, $method, $params = array() ) {
+			$class = self::$instances[$instance];
 
-			$class->$method($params);
+			$class->$method( $params );
+			// Call user func?
 		}
 
 	}
