@@ -37,7 +37,7 @@ class Yoast_Googleanalytics_Reporting {
 	 *
 	 * @return array|null
 	 */
-	public function do_request( $target_url, $scope, $access_token, $secret ) {
+	public function do_api_request( $target_url, $scope, $access_token, $secret ) {
 		$gdata     = $this->get_gdata( $scope, $access_token, $secret );
 		$response  = $gdata->get( $target_url );
 		$http_code = wp_remote_retrieve_response_code( $response );
