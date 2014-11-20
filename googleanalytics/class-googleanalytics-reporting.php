@@ -33,7 +33,7 @@ class Yoast_Googleanalytics_Reporting {
 	 * @param string $target_url
 	 * @param string $scope
 	 * @param string $access_token
-	 * @param string secret
+	 * @param        string secret
 	 *
 	 * @return array|null
 	 */
@@ -46,7 +46,15 @@ class Yoast_Googleanalytics_Reporting {
 		if ( $http_code == 200 ) {
 			return array(
 				'response' => array( 'code' => $http_code ),
-				'body'     => $response,
+				'body_raw' => $response,
+				'body'     => $this->parse_response( json_decode( $response ) ),
+			);
+		} else {
+			return array(
+				'body_raw'  => $response,
+				'response'  => $response,
+				'http_code' => $http_code,
+				'gdata'     => $gdata,
 			);
 		}
 	}
@@ -73,5 +81,43 @@ class Yoast_Googleanalytics_Reporting {
 		return $gdata;
 	}
 
+	/**
+	 * Format a response
+	 *
+	 * @param $raw_data
+	 *
+	 * @return mixed
+	 */
+	public function parse_response( $raw_data ) {
+		$data = array();
+
+		if ( isset( $raw_data->rows ) ) {
+			if ( is_array( $raw_data->rows ) ) {
+				foreach ( $raw_data->rows as $key => $item ) {
+					$data[] = array(
+						'date'  => (int) $this->format_ga_date( $item[0] ),
+						'value' => (int) $item[1],
+					);
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Format the GA date value
+	 *
+	 * @param $date
+	 *
+	 * @return int
+	 */
+	private function format_ga_date( $date ) {
+		$year  = substr( $date, 0, 2 );
+		$month = substr( $date, 4, 2 );
+		$day   = substr( $date, 6, 2 );
+
+		return strtotime( $year . '-' . $month . '-' . $day );
+	}
 
 }
