@@ -113,7 +113,7 @@ class Yoast_Googleanalytics_Reporting {
 	 * @return int
 	 */
 	private function format_ga_date( $date ) {
-		$year  = substr( $date, 0, 2 );
+		$year  = substr( $date, 0, 4 );
 		$month = substr( $date, 4, 2 );
 		$day   = substr( $date, 6, 2 );
 
