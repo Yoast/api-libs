@@ -88,7 +88,7 @@ class Yoast_Googleanalytics_Reporting {
 	 *
 	 * @return mixed
 	 */
-	public function parse_response( $raw_data ) {
+	private function parse_response( $raw_data ) {
 		$data = array();
 
 		if ( isset( $raw_data->rows ) ) {
