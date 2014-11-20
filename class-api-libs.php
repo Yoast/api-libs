@@ -102,6 +102,14 @@ if ( ! class_exists( 'Yoast_Api_Libs' ) ) {
 			return false;
 		}
 
+		public function get_instance( $name ) {
+			if ( isset( self::$instances[$name] ) ) {
+				return self::$instances[$name];
+			}
+
+			return false;
+		}
+
 		/**
 		 * Execute a call with this method
 		 *
