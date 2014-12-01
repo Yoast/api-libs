@@ -94,10 +94,18 @@ class Yoast_Googleanalytics_Reporting {
 		if ( isset( $raw_data->rows ) ) {
 			if ( is_array( $raw_data->rows ) ) {
 				foreach ( $raw_data->rows as $key => $item ) {
-					$data[] = array(
-						'date'  => (int) $this->format_ga_date( $item[0] ),
-						'value' => (int) $item[1],
-					);
+					if ( isset( $item[2] ) ) {
+						$data[] = array(
+							'date'  => (int) $this->format_ga_date( $item[0] ),
+							'bool'  => (string) $item[1],
+							'value' => (int) $item[2],
+						);
+					} else {
+						$data[] = array(
+							'date'  => (int) $this->format_ga_date( $item[0] ),
+							'value' => (int) $item[1],
+						);
+					}
 				}
 			}
 		}
