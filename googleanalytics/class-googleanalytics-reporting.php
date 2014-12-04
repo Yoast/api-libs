@@ -33,11 +33,14 @@ class Yoast_Googleanalytics_Reporting {
 	 * @param string $target_url
 	 * @param string $scope
 	 * @param string $access_token
-	 * @param        string secret
+	 * @param        string      secret
+	 * @param        string      table,datelist
+	 * @param int    $start_date Unix timestamp
+	 * @param int    $end_date   Unix timestamp
 	 *
 	 * @return array|null
 	 */
-	public function do_api_request( $target_url, $scope, $access_token, $secret ) {
+	public function do_api_request( $target_url, $scope, $access_token, $secret, $store_as, $start_date, $end_date ) {
 		$gdata     = $this->get_gdata( $scope, $access_token, $secret );
 		$response  = $gdata->get( $target_url );
 		$http_code = wp_remote_retrieve_response_code( $response );
@@ -47,7 +50,7 @@ class Yoast_Googleanalytics_Reporting {
 			return array(
 				'response' => array( 'code' => $http_code ),
 				'body_raw' => $response,
-				'body'     => $this->parse_response( json_decode( $response ) ),
+				'body'     => $this->parse_response( json_decode( $response ), $store_as, $start_date, $end_date ),
 			);
 		} else {
 			return array(
@@ -85,15 +88,48 @@ class Yoast_Googleanalytics_Reporting {
 	 * Format a response
 	 *
 	 * @param $raw_data
+	 * @param $store_as
+	 * @param $start_date
+	 * @param $end_date
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	private function parse_response( $raw_data ) {
+	private function parse_response( $raw_data, $store_as, $start_date, $end_date ) {
 		$data = array();
+
+		if ( $store_as == 'datelist' ) {
+			$data_tmp = $this->date_range( strtotime( $start_date ), strtotime( $end_date ) );
+			$data     = array_keys( $data_tmp );
+		}
 
 		if ( isset( $raw_data->rows ) && is_array( $raw_data->rows ) ) {
 			foreach ( $raw_data->rows as $key => $item ) {
-				$data[] = $this->parse_row( $item );
+				if ( $store_as == 'datelist' ) {
+					$data[(int) $this->format_ga_date( $item[0] )] = $this->parse_row( $item );
+				} else {
+					$data[] = $this->parse_data_row( $item );
+				}
+			}
+		}
+
+		if ( $store_as == 'datelist' ) {
+			$data = $this->check_validity_data( $data );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Check the key on valid unix timestamps and remove invalid keys
+	 *
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	private function check_validity_data( $data =array() ) {
+		foreach( $data as $key => $value ){
+			if(strlen($key)<=5){
+				unset($data[$key]);
 			}
 		}
 
@@ -126,15 +162,49 @@ class Yoast_Googleanalytics_Reporting {
 		if ( isset( $item[2] ) ) {
 			return array(
 				'date'  => (int) $this->format_ga_date( $item[0] ),
-				'bool'  => (string) $item[1],
-				'value' => (int) $item[2],
+				'value' => (string) $item[1],
+				'total' => (int) $item[2],
 			);
 		} else {
-			return array(
-				'date'  => (int) $this->format_ga_date( $item[0] ),
-				'value' => (int) $item[1],
-			);
+			return (int) $item[1];
 		}
+	}
+
+	/**
+	 * Parse a row for the list storage type
+	 *
+	 * @param $item
+	 *
+	 * @return array
+	 */
+	private function parse_data_row( $item ) {
+		return array(
+			'name'  => (string) $item[0],
+			'value' => (int) $item[1],
+		);
+	}
+
+	/**
+	 * Calculate the date range between 2 dates
+	 *
+	 * @param        $first
+	 * @param        $last
+	 * @param string $step
+	 * @param string $format
+	 *
+	 * @return array
+	 */
+	private function date_range( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
+		$dates   = array();
+		$current = $first;
+		$last    = $last;
+
+		while ( $current <= $last ) {
+			$dates[] = date( $format, $current );
+			$current = strtotime( $step, $current );
+		}
+
+		return $dates;
 	}
 
 }
