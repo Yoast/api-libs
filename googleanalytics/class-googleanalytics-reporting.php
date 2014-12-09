@@ -126,7 +126,7 @@ class Yoast_Googleanalytics_Reporting {
 	 *
 	 * @return array
 	 */
-	private function check_validity_data( $data =array() ) {
+	private function check_validity_data( $data = array() ) {
 		foreach( $data as $key => $value ){
 			if(strlen($key)<=5){
 				unset($data[$key]);
