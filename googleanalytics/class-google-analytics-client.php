@@ -1,0 +1,148 @@
+<?php
+
+if ( ! class_exists( 'Google_Client' ) ) {
+	require_once( WPSEO_PREMIUM_PATH . 'classes/google/Google_Client.php' );
+}
+
+class Yoast_Google_Analytics_Client extends Google_Client {
+
+	protected $http_response_code;
+
+	const OPTION_REFRESH_TOKEN = 'yoast-ga-refresh_token';
+
+	protected $default_config = array(
+		'redirect_uri' => 'urn:ietf:wg:oauth:2.0:oob',
+		'scopes'       => array( 'https://www.googleapis.com/auth/analytics.readonly' ),
+	);
+
+	public function __construct( $config ) {
+
+		parent::__construct();
+
+		// Initialize the config to set all properties properly
+		$this->init_config( $config );
+
+		// Let's get an access token if we've got a refresh token
+		$this->refresh_tokens();
+
+	}
+
+	/**
+	 * Initialize the config, will merge given config with default config to be sure all settings are available
+	 *
+	 * @param $config
+	 */
+	protected function init_config( $config ) {
+		$config = array_merge( $config, $this->default_config );
+
+		if ( ! empty( $config['application_name'] ) ) {
+			$this->setApplicationName( $config['application_name'] );
+		} else {
+			// @todo: throw new error
+
+		}
+
+		if ( ! empty( $config['client_id'] ) ) {
+			$this->setClientId( $config['client_id'] );
+		} else {
+			// @todo: throw new error
+
+		}
+
+		if ( ! empty( $config['client_secret'] ) ) {
+			$this->setClientSecret( $config['client_secret'] );
+		} else {
+			// @todo: throw new error
+		}
+
+		// Set our settings
+		$this->setRedirectUri( $config['redirect_uri'] );
+		$this->setScopes( $config['scopes'] );
+		$this->setAccessType('offline');
+	}
+
+	/**
+	 * Refeshing the tokens
+	 */
+	protected function refresh_tokens() {
+		$refresh_token = $this->get_refresh_token();
+
+		if ( '' != $refresh_token ) {
+			// Refresh the token
+			$response = $this->refreshToken( $refresh_token );
+
+			// Check response
+			if ( !empty( $response ) ) {
+				$response = json_decode( $response );
+
+				// Check if there is an access_token
+				if ( isset( $response->access_token ) ) {
+					// Set access_token
+					$this->setAccessToken( $response->access_token );
+				}
+			}
+		}
+	}
+
+	public function authenticate_client( $authorization_code = null ) {
+
+		// Authenticate client
+		try {
+			$this->authenticate( $authorization_code );
+
+			// Get access response
+			$response = $this->getAccessToken();
+
+			// Check if there is a response body
+			if ( !empty( $response ) ) {
+				$response = json_decode( $response );
+
+				if ( is_object( $response ) ) {
+					// Save the refresh token
+					$this->save_refresh_token( $response->refresh_token );
+
+					return true;
+				}
+
+			}
+		} catch ( Google_AuthException $exception ) {
+			return false;
+		}
+	}
+
+	public function do_request( $target_request_url ) {
+		// Do list sites request
+		$request = new Google_HttpRequest( $target_request_url );
+
+		// Get list sites response
+		$response = $this->getIo()->authenticatedRequest( $request );
+
+		$this->http_response_code = $response->getResponseHttpCode();
+
+		return $response;
+	}
+
+	public function get_http_response_code() {
+		return $this->http_response_code;
+	}
+
+
+	/**
+	 * Save the refresh token
+	 *
+	 * @param $refresh_token
+	 */
+	public function save_refresh_token( $refresh_token ) {
+		update_option( self::OPTION_REFRESH_TOKEN, $refresh_token );
+	}
+
+	/**
+	 * Return refresh token
+	 *
+	 * @return string
+	 */
+	public function get_refresh_token() {
+		return get_option( self::OPTION_REFRESH_TOKEN, '' );
+	}
+
+}
