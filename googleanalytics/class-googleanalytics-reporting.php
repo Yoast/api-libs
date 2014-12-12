@@ -26,43 +26,6 @@ class Yoast_Googleanalytics_Reporting {
 	}
 
 	/**
-	 * Doing request to Google Analytics
-	 *
-	 * This method will do a request to google and get the response code and body from content
-	 *
-	 * @param string $target_url
-	 * @param string $scope
-	 * @param string $access_token
-	 * @param        string      secret
-	 * @param        string      table,datelist
-	 * @param int    $start_date Unix timestamp
-	 * @param int    $end_date   Unix timestamp
-	 *
-	 * @return array|null
-	 */
-	public function do_api_request( $target_url, $scope, $access_token, $secret, $store_as, $start_date, $end_date ) {
-		$gdata     = $this->get_gdata( $scope, $access_token, $secret );
-		$response  = $gdata->get( $target_url );
-		$http_code = wp_remote_retrieve_response_code( $response );
-		$response  = wp_remote_retrieve_body( $response );
-
-		if ( $http_code == 200 ) {
-			return array(
-				'response' => array( 'code' => $http_code ),
-				'body_raw' => $response,
-				'body'     => $this->parse_response( json_decode( $response ), $store_as, $start_date, $end_date ),
-			);
-		} else {
-			return array(
-				'body_raw'  => $response,
-				'response'  => $response,
-				'http_code' => $http_code,
-				'gdata'     => $gdata,
-			);
-		}
-	}
-
-	/**
 	 * Getting WP_GData object
 	 *
 	 * If not available include class file and create an instance of WP_GDAta
@@ -94,7 +57,7 @@ class Yoast_Googleanalytics_Reporting {
 	 *
 	 * @return array
 	 */
-	private function parse_response( $raw_data, $store_as, $start_date, $end_date ) {
+	public function parse_response( $raw_data, $store_as, $start_date, $end_date ) {
 		$data = array();
 
 		if ( $store_as == 'datelist' ) {
@@ -102,8 +65,8 @@ class Yoast_Googleanalytics_Reporting {
 			$data     = array_keys( $data_tmp );
 		}
 
-		if ( isset( $raw_data->rows ) && is_array( $raw_data->rows ) ) {
-			foreach ( $raw_data->rows as $key => $item ) {
+		if ( isset( $raw_data['body']['rows'] ) && is_array( $raw_data['body']['rows'] ) ) {
+			foreach ( $raw_data['body']['rows'] as $key => $item ) {
 				if ( $store_as == 'datelist' ) {
 					$data[(int) $this->format_ga_date( $item[0] )] = $this->parse_row( $item );
 				} else {
