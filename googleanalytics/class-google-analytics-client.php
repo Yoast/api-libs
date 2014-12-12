@@ -15,6 +15,10 @@ class Yoast_Google_Analytics_Client extends Google_Client {
 		'scopes'       => array( 'https://www.googleapis.com/auth/analytics.readonly' ),
 	);
 
+	/**
+	 * Initialize the config and refresh the token
+	 * @param array $config
+	 */
 	public function __construct( $config ) {
 
 		parent::__construct();
@@ -84,6 +88,14 @@ class Yoast_Google_Analytics_Client extends Google_Client {
 		}
 	}
 
+	/**
+	 * Authenticate the client. If $authorization_code is empty it will lead the user through the validation process of
+	 * Google. If set it will be get the access token for current session and save the refresh_token for future use
+	 *
+	 * @param mixed $authorization_code
+	 *
+	 * @return bool
+	 */
 	public function authenticate_client( $authorization_code = null ) {
 
 		// Authenticate client
@@ -110,6 +122,14 @@ class Yoast_Google_Analytics_Client extends Google_Client {
 		}
 	}
 
+	/**
+	 * Doing a request to the API
+	 *
+	 * @param string $target_request_url
+	 *
+	 * @return Google_HttpRequest
+	 */
+
 	public function do_request( $target_request_url ) {
 		// Do list sites request
 		$request = new Google_HttpRequest( $target_request_url );
@@ -122,6 +142,10 @@ class Yoast_Google_Analytics_Client extends Google_Client {
 		return $response;
 	}
 
+	/**
+	 * Getting the response code, saved from latest request to Google
+	 * @return mixed
+	 */
 	public function get_http_response_code() {
 		return $this->http_response_code;
 	}
