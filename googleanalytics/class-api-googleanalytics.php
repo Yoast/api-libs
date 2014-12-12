@@ -10,7 +10,7 @@ if ( ! class_exists( 'Yoast_Api_Googleanalytics' ) ) {
 		 * This class will be loaded when someone calls the API library with the Google analytics module
 		 */
 		public function __construct() {
-
+			$this->load_api_oauth_files();
 		}
 
 		/**
@@ -18,7 +18,8 @@ if ( ! class_exists( 'Yoast_Api_Googleanalytics' ) ) {
 		 */
 		private function load_api_oauth_files() {
 			$oauth_files = array(
-				'yoast_api_googleanalytics_reporting'                  => 'class-googleanalytics-reporting',
+				'yoast_api_googleanalytics_reporting' => 'class-googleanalytics-reporting',
+				'yoast_google_analytics_client'       => 'class-google-analytics-client',
 			);
 
 			foreach ( $oauth_files as $key => $name ) {
