@@ -17,14 +17,14 @@ class Yoast_Googleanalytics_Reporting {
 	 *
 	 * @return null|Yoast_Google_Analytics
 	 */
-	public static function instance() {
+	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}
 
 		return self::$instance;
 	}
-	
+
 	/**
 	 * Format a response
 	 *
@@ -68,9 +68,9 @@ class Yoast_Googleanalytics_Reporting {
 	 * @return array
 	 */
 	private function check_validity_data( $data = array() ) {
-		foreach( $data as $key => $value ){
-			if(strlen($key)<=5){
-				unset($data[$key]);
+		foreach ( $data as $key => $value ) {
+			if ( strlen( $key ) <= 5 ) {
+				unset( $data[$key] );
 			}
 		}
 
