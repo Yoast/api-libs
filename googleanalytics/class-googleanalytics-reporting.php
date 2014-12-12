@@ -24,29 +24,7 @@ class Yoast_Googleanalytics_Reporting {
 
 		return self::$instance;
 	}
-
-	/**
-	 * Getting WP_GData object
-	 *
-	 * If not available include class file and create an instance of WP_GDAta
-	 *
-	 * @param string $scope
-	 * @param null   $token
-	 * @param null   $secret
-	 *
-	 * @return WP_GData
-	 */
-	protected function get_gdata( $scope, $token = null, $secret = null ) {
-		$args = array(
-			'scope'              => $scope,
-			'xoauth_displayname' => 'Google Analytics by Yoast',
-		);
-
-		$gdata = new WP_GData( $args, $token, $secret );
-
-		return $gdata;
-	}
-
+	
 	/**
 	 * Format a response
 	 *
