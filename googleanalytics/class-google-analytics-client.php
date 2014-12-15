@@ -72,18 +72,23 @@ class Yoast_Google_Analytics_Client extends Google_Client {
 		$refresh_token = $this->get_refresh_token();
 
 		if ( '' != $refresh_token ) {
-			// Refresh the token
-			$response = $this->refreshToken( $refresh_token );
+			try {
+				// Refresh the token
+				$response = $this->refreshToken( $refresh_token );
 
-			// Check response
-			if ( !empty( $response ) ) {
-				$response = json_decode( $response );
 
-				// Check if there is an access_token
-				if ( isset( $response->access_token ) ) {
-					// Set access_token
-					$this->setAccessToken( $response->access_token );
+				// Check response
+				if ( ! empty( $response ) ) {
+					$response = json_decode( $response );
+
+					// Check if there is an access_token
+					if ( isset( $response->access_token ) ) {
+						// Set access_token
+						$this->setAccessToken( $response->access_token );
+					}
 				}
+			} catch(Exception $e) {
+				$this->save_refresh_token('');
 			}
 		}
 	}
