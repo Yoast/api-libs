@@ -18,6 +18,7 @@
 require_once 'io/Google_HttpRequest.php';
 require_once 'io/Google_HttpStreamIO.php';
 require_once 'io/Google_CurlIO.php';
+require_once 'io/Google_WPIO.php';
 require_once 'io/Google_REST.php';
 
 /**

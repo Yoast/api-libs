@@ -16,7 +16,7 @@
  */
 
 /**
- * Curl based implementation of apiIO.
+ * WP based implementation of apiIO.
  *
  * @author Chris Chabot <chabotc@google.com>
  * @author Chirag Shah <chirags@google.com>
@@ -30,23 +30,11 @@ class Google_WPIO extends Google_IO {
 		'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
 		'te', 'trailers', 'transfer-encoding', 'upgrade');
 
-	private $curlParams = array (
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_FOLLOWLOCATION => 0,
-		CURLOPT_FAILONERROR => false,
-		CURLOPT_SSL_VERIFYPEER => true,
-		CURLOPT_HEADER => true,
-		CURLOPT_VERBOSE => false,
-	);
-
 	/**
 	 * Check for cURL availability.
 	 */
 	public function __construct() {
-		if (! function_exists('curl_init')) {
-			throw new Exception(
-				'Google CurlIO client requires the CURL PHP extension');
-		}
+
 	}
 
 	/**
@@ -73,6 +61,7 @@ class Google_WPIO extends Google_IO {
 	 * @throws Google_IOException on curl or IO error
 	 */
 	public function makeRequest(Google_HttpRequest $request) {
+
 		// First, check to see if we have a valid cached version.
 		$cached = $this->getCachedRequest($request);
 		if ($cached !== false) {
@@ -86,46 +75,33 @@ class Google_WPIO extends Google_IO {
 			$request = $this->processEntityRequest($request);
 		}
 
-		$ch = curl_init();
-		curl_setopt_array($ch, $this->curlParams);
-		curl_setopt($ch, CURLOPT_URL, $request->getUrl());
+		$params = array(
+			'user-agent' => $request->getUserAgent()
+		);
+
 		if ($request->getPostBody()) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getPostBody());
+			$params['body'] = $request->getPostBody();
 		}
 
 		$requestHeaders = $request->getRequestHeaders();
 		if ($requestHeaders && is_array($requestHeaders)) {
-			$parsed = array();
-			foreach ($requestHeaders as $k => $v) {
-				$parsed[] = "$k: $v";
-			}
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $parsed);
+			$params['headers'] = $requestHeaders;
 		}
 
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getRequestMethod());
-		curl_setopt($ch, CURLOPT_USERAGENT, $request->getUserAgent());
-		$respData = curl_exec($ch);
 
-		// Retry if certificates are missing.
-		if (curl_errno($ch) == CURLE_SSL_CACERT) {
-			error_log('SSL certificate problem, verify that the CA cert is OK.'
-				. ' Retrying with the CA cert bundle from google-api-php-client.');
-			curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . '/cacerts.pem');
-			$respData = curl_exec($ch);
+		switch( $request->getRequestMethod() ) {
+			case 'POST' :
+				$response = wp_remote_post( $request->getUrl(), $params );
+				break;
+
+			case 'GET' :
+				$response = wp_remote_get( $request->getUrl(), $params );
+				break;
 		}
 
-		$respHeaderSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-		$respHttpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		$curlErrorNum = curl_errno($ch);
-		$curlError = curl_error($ch);
-		curl_close($ch);
-		if ($curlErrorNum != CURLE_OK) {
-			throw new Google_IOException("HTTP Error: ($respHttpCode) $curlError");
-		}
-
-		// Parse out the raw response into usable bits
-		list($responseHeaders, $responseBody) =
-			self::parseHttpResponse($respData, $respHeaderSize);
+		$responseBody    = wp_remote_retrieve_body( $response );
+		$respHttpCode    = wp_remote_retrieve_response_code( $response );
+		$responseHeaders = wp_remote_retrieve_headers( $response );
 
 		if ($respHttpCode == 304 && $cached) {
 			// If the server responded NOT_MODIFIED, return the cached request.
@@ -136,63 +112,27 @@ class Google_WPIO extends Google_IO {
 		// Fill in the apiHttpRequest with the response values
 		$request->setResponseHttpCode($respHttpCode);
 		$request->setResponseHeaders($responseHeaders);
+
 		$request->setResponseBody($responseBody);
 		// Store the request in cache (the function checks to see if the request
 		// can actually be cached)
 		$this->setCachedRequest($request);
 		// And finally return it
+
+
+		/**/
 		return $request;
 	}
 
 	/**
-	 * Set options that update cURL's default behavior.
+	 * Set options that update default behavior.
 	 * The list of accepted options are:
 	 * {@link http://php.net/manual/en/function.curl-setopt.php]
 	 *
-	 * @param array $optCurlParams Multiple options used by a cURL session.
+	 * @param array $optParams Multiple options used by a cURL session.
 	 */
-	public function setOptions($optCurlParams) {
-		foreach ($optCurlParams as $key => $val) {
-			$this->curlParams[$key] = $val;
-		}
+	public function setOptions($optParams) {
+
 	}
 
-	/**
-	 * @param $respData
-	 * @param $headerSize
-	 * @return array
-	 */
-	private static function parseHttpResponse($respData, $headerSize) {
-		if (stripos($respData, parent::CONNECTION_ESTABLISHED) !== false) {
-			$respData = str_ireplace(parent::CONNECTION_ESTABLISHED, '', $respData);
-		}
-
-		if ($headerSize) {
-			$responseBody = substr($respData, $headerSize);
-			$responseHeaders = substr($respData, 0, $headerSize);
-		} else {
-			list($responseHeaders, $responseBody) = explode("\r\n\r\n", $respData, 2);
-		}
-
-		$responseHeaders = self::parseResponseHeaders($responseHeaders);
-		return array($responseHeaders, $responseBody);
-	}
-
-	private static function parseResponseHeaders($rawHeaders) {
-		$responseHeaders = array();
-
-		$responseHeaderLines = explode("\r\n", $rawHeaders);
-		foreach ($responseHeaderLines as $headerLine) {
-			if ($headerLine && strpos($headerLine, ':') !== false) {
-				list($header, $value) = explode(': ', $headerLine, 2);
-				$header = strtolower($header);
-				if (isset($responseHeaders[$header])) {
-					$responseHeaders[$header] .= "\n" . $value;
-				} else {
-					$responseHeaders[$header] = $value;
-				}
-			}
-		}
-		return $responseHeaders;
-	}
 }
