@@ -17,6 +17,7 @@
 
 require_once "Google_FileCache.php";
 require_once "Google_MemcacheCache.php";
+require_once "Google_WPCache.php";
 
 /**
  * Abstract storage class
