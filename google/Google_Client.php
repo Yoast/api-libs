@@ -35,24 +35,10 @@ set_include_path(dirname(__FILE__) . PATH_SEPARATOR . get_include_path());
 require_once "config.php";
 // If a local configuration file is found, merge it's values with the default configuration
 if (file_exists(dirname(__FILE__)  . '/local_config.php')) {
-  $defaultConfig = $apiConfig;
-  require_once (dirname(__FILE__)  . '/local_config.php');
-  $apiConfig = array_merge($defaultConfig, $apiConfig);
+	$defaultConfig = $apiConfig;
+	require_once( dirname( __FILE__ ) . '/local_config.php' );
+	$apiConfig = array_merge( $defaultConfig, $apiConfig );
 }
-
-// Include the top level classes, they each include their own dependencies
-require_once 'service/Google_Model.php';
-require_once 'service/Google_Service.php';
-require_once 'service/Google_ServiceResource.php';
-require_once 'auth/Google_AssertionCredentials.php';
-require_once 'auth/Google_Signer.php';
-require_once 'auth/Google_P12Signer.php';
-require_once 'service/Google_BatchRequest.php';
-require_once 'external/URITemplateParser.php';
-require_once 'auth/Google_Auth.php';
-require_once 'cache/Google_Cache.php';
-require_once 'io/Google_IO.php';
-require_once( 'service/Google_MediaFileUpload.php' );
 
 /**
  * The Google API Client
