@@ -22,8 +22,6 @@
  * @author Chirag Shah <chirags@google.com>
  */
 
-require_once 'Google_CacheParser.php';
-
 class Google_CurlIO extends Google_IO {
   private static $ENTITY_HTTP_METHODS = array("POST" => null, "PUT" => null);
   private static $HOP_BY_HOP = array(

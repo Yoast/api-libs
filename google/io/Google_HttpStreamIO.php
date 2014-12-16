@@ -21,8 +21,6 @@
  * @author Stuart Langley <slangley@google.com>
  */
 
-require_once 'Google_CacheParser.php';
-
 class Google_HttpStreamIO extends Google_IO {
 
   private static $ENTITY_HTTP_METHODS = array("POST" => null, "PUT" => null);

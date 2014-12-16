@@ -27,6 +27,9 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 			$path        = dirname( __FILE__ );
 			$oauth_files = array(
 				// Main requires
+				'yoast_google_client'          => 'Google_Client',
+
+				// Requires in classes
 				'yoast_google_model'           => 'service/Google_Model',
 				'yoast_google_service'         => 'service/Google_Service',
 				'yoast_google_serviceresource' => 'service/Google_ServiceResource',
@@ -39,15 +42,24 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 				'yoast_google_cache'           => 'cache/Google_Cache',
 				'yoast_google_io'              => 'io/Google_IO',
 				'yoast_google_mediafileupload' => 'service/Google_MediaFileUpload',
-				'yoast_google_client'          => 'Google_Client',
-
-				// Requires in classes
 				'yoast_google_authnone'        => 'auth/Google_AuthNone',
 				'yoast_google_oauth2'          => 'auth/Google_OAuth2',
 				'yoast_google_verifier'        => 'auth/Google_Verifier',
 				'yoast_google_loginticket'     => 'auth/Google_LoginTicket',
-				'yoast_goole_utils'            => 'service/Google_Utils',
-				
+				'yoast_google_utils'           => 'service/Google_Utils',
+
+				// Caching
+				'yoast_google_filecache'       => 'cache/Google_FileCache',
+				'yoast_google_memcachecache'   => 'cache/Google_MemcacheCache',
+				'yoast_google_cacheparser'     => 'io/Google_CacheParser',
+
+				// Requests
+				'yoast_httprequest'            => 'io/Google_HttpRequest',
+				'yoast_httpstream_io'          => 'io/Google_HttpStreamIO',
+				'yoast_google_rest'            => 'io/Google_REST',
+
+				// REPLACE ME!
+				'yoast_curl_io'                => 'io/Google_CurlIO',
 			);
 
 
