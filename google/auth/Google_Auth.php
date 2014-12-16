@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-require_once "Google_AuthNone.php";
-require_once "Google_OAuth2.php";
-
 /**
  * Abstract class for the Authentication in the API client
  * @author Chris Chabot <chabotc@google.com>

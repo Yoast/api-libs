@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-require_once "Google_P12Signer.php";
-
 /**
  * Signs data.
  *

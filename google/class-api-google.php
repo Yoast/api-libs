@@ -27,21 +27,26 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 			$path        = dirname( __FILE__ );
 			$oauth_files = array(
 				// Main requires
-				'yoast_google_model'           => 'service/Google_Model.php',
-				'yoast_google_service'         => 'service/Google_Service.php',
-				'yoast_google_serviceresource' => 'service/Google_ServiceResource.php',
-				'yoast_google_assertion'       => 'auth/Google_AssertionCredentials.php',
-				'yoast_google_signer'          => 'auth/Google_Signer.php',
-				'yoast_google_p12signer'       => 'auth/Google_P12Signer.php',
-				'yoast_google_batchrequest'    => 'service/Google_BatchRequest.php',
-				'yoast_google_uritemplate'     => 'external/URITemplateParser.php',
-				'yoast_google_auth'            => 'auth/Google_Auth.php',
-				'yoast_google_cache'           => 'cache/Google_Cache.php',
-				'yoast_google_io'              => 'io/Google_IO.php',
-				'yoast_google_mediafileupload' => 'service/Google_MediaFileUpload.php',
+				'yoast_google_model'           => 'service/Google_Model',
+				'yoast_google_service'         => 'service/Google_Service',
+				'yoast_google_serviceresource' => 'service/Google_ServiceResource',
+				'yoast_google_assertion'       => 'auth/Google_AssertionCredentials',
+				'yoast_google_signer'          => 'auth/Google_Signer',
+				'yoast_google_p12signer'       => 'auth/Google_P12Signer',
+				'yoast_google_batchrequest'    => 'service/Google_BatchRequest',
+				'yoast_google_uritemplate'     => 'external/URITemplateParser',
+				'yoast_google_auth'            => 'auth/Google_Auth',
+				'yoast_google_cache'           => 'cache/Google_Cache',
+				'yoast_google_io'              => 'io/Google_IO',
+				'yoast_google_mediafileupload' => 'service/Google_MediaFileUpload',
 				'yoast_google_client'          => 'Google_Client',
 
 				// Requires in classes
+				'yoast_google_authnone'        => 'auth/Google_AuthNone',
+				'yoast_google_oauth2'          => 'auth/Google_OAuth2',
+				'yoast_google_verifier'        => 'auth/Google_Verifier',
+				'yoast_google_loginticket'     => 'auth/Google_LoginTicket',
+				'yoast_goole_utils'            => 'service/Google_Utils',
 				
 			);
 

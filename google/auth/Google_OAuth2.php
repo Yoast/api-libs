@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-require_once "Google_Verifier.php";
-require_once "Google_LoginTicket.php";
-require_once "service/Google_Utils.php";
-
 /**
  * Authentication class that deals with the OAuth 2 web-server authentication flow
  *
