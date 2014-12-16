@@ -27,7 +27,7 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 		 */
 		private function autoload_api_google_files( $class_name ) {
 			$path        = dirname( __FILE__ );
-			$classname   = strtolower( $class_name );
+			$class_name  = strtolower( $class_name );
 			$oauth_files = array(
 				// Main requires
 				'yoast_google_client'          => 'Google_Client',
