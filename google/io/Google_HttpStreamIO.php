@@ -16,14 +16,12 @@
  */
 
 /**
- * Http Streams based implementation of Google_IO.
+ * Http Streams based implementation of Yoast_Google_IO.
  *
  * @author Stuart Langley <slangley@google.com>
  */
 
-require_once 'Google_CacheParser.php';
-
-class Google_HttpStreamIO extends Google_IO {
+class Yoast_Google_HttpStreamIO extends Yoast_Google_IO {
 
   private static $ENTITY_HTTP_METHODS = array("POST" => null, "PUT" => null);
 
@@ -40,26 +38,26 @@ class Google_HttpStreamIO extends Google_IO {
    * Perform an authenticated / signed apiHttpRequest.
    * This function takes the apiHttpRequest, calls apiAuth->sign on it
    * (which can modify the request in what ever way fits the auth mechanism)
-   * and then calls Google_HttpStreamIO::makeRequest on the signed request
+   * and then calls Yoast_Google_HttpStreamIO::makeRequest on the signed request
    *
-   * @param Google_HttpRequest $request
-   * @return Google_HttpRequest The resulting HTTP response including the
+   * @param Yoast_Google_HttpRequest $request
+   * @return Yoast_Google_HttpRequest The resulting HTTP response including the
    * responseHttpCode, responseHeaders and responseBody.
    */
-  public function authenticatedRequest(Google_HttpRequest $request) {
-    $request = Google_Client::$auth->sign($request);
+  public function authenticatedRequest(Yoast_Google_HttpRequest $request) {
+    $request = Yoast_Google_Client::$auth->sign($request);
     return $this->makeRequest($request);
   }
 
   /**
    * Execute a apiHttpRequest
    *
-   * @param Google_HttpRequest $request the http request to be executed
-   * @return Google_HttpRequest http request with the response http code,
+   * @param Yoast_Google_HttpRequest $request the http request to be executed
+   * @return Yoast_Google_HttpRequest http request with the response http code,
    * response headers and response body filled in
-   * @throws Google_IOException on curl or IO error
+   * @throws Yoast_Google_IOException on curl or IO error
    */
-  public function makeRequest(Google_HttpRequest $request) {
+  public function makeRequest(Yoast_Google_HttpRequest $request) {
     // First, check to see if we have a valid cached version.
     $cached = $this->getCachedRequest($request);
     if ($cached !== false) {
@@ -112,7 +110,7 @@ class Google_HttpStreamIO extends Google_IO {
                                        $context);
 
     if (false === $response_data) {
-      throw new Google_IOException("HTTP Error: Unable to connect");
+      throw new Yoast_Google_IOException("HTTP Error: Unable to connect");
     }
 
     $respHttpCode = $this->getHttpResponseCode($http_response_header);

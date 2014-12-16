@@ -14,19 +14,32 @@ if ( ! class_exists( 'Yoast_Api_Googleanalytics' ) ) {
 		}
 
 		/**
-		 * Autoload the Oauth classes
+		 * Register the Autoload the Oauth classes
 		 */
 		private function load_api_oauth_files() {
+			spl_autoload_register( array( $this, 'autoload_api_oauth_files' ) );
+		}
+
+		/**
+		 * Autoload the API Oauth classes
+		 * 
+		 * @param string $class_name - The class that should be loaded
+		 */
+		private function autoload_api_oauth_files( $class_name ) {
+			$path        = dirname( __FILE__ );
+			$class_name  = strtolower( $class_name );
 			$oauth_files = array(
 				'yoast_api_googleanalytics_reporting' => 'class-googleanalytics-reporting',
 				'yoast_google_analytics_client'       => 'class-google-analytics-client',
 			);
 
-			foreach ( $oauth_files as $key => $name ) {
-				if ( file_exists( dirname( __FILE__ ) . '/' . $name . '.php' ) ) {
-					require_once( dirname( __FILE__ ) . '/' . $name . '.php' );
+			if ( ! empty( $oauth_files[$class_name] ) ) {
+				if ( file_exists( $path . '/' . $oauth_files[$class_name] . '.php' ) ) {
+					require_once( $path . '/' . $oauth_files[$class_name] . '.php' );
 				}
+
 			}
+
 		}
 
 	}

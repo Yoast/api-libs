@@ -22,7 +22,7 @@
  * @author Chirag Shah <chirags@google.com>
  *
  */
-class Google_Model {
+class Yoast_Google_Model {
   public function __construct( /* polymorphic */ ) {
     if (func_num_args() ==  1 && is_array(func_get_arg(0))) {
       // Initialize the model with the array's contents.
@@ -101,14 +101,14 @@ class Google_Model {
 
   /**
    * Verify if $obj is an array.
-   * @throws Google_Exception Thrown if $obj isn't an array.
+   * @throws Yoast_Google_Exception Thrown if $obj isn't an array.
    * @param array $obj Items that should be validated.
    * @param string $type Array items should be of this type.
    * @param string $method Method expecting an array as an argument.
    */
   public function assertIsArray($obj, $type, $method) {
     if ($obj && !is_array($obj)) {
-      throw new Google_Exception("Incorrect parameter type passed to $method(), expected an"
+      throw new Yoast_Google_Exception("Incorrect parameter type passed to $method(), expected an"
           . " array containing items of type $type.");
     }
   }

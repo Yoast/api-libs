@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-require_once "Google_PemVerifier.php";
-
 /**
  * Verifies signatures.
  *
  * @author Brian Eaton <beaton@google.com>
  */
-abstract class Google_Verifier {
+abstract class Yoast_Google_Verifier {
   /**
    * Checks a signature, returns true if the signature is correct,
    * false otherwise.

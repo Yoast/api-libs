@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-require_once "Google_Verifier.php";
-require_once "Google_LoginTicket.php";
-require_once "service/Google_Utils.php";
-
 /**
  * Authentication class that deals with the OAuth 2 web-server authentication flow
  *
@@ -26,7 +22,7 @@ require_once "service/Google_Utils.php";
  * @author Chirag Shah <chirags@google.com>
  *
  */
-class Google_OAuth2 extends Google_Auth {
+class Yoast_Google_OAuth2 extends Yoast_Google_Auth {
   public $clientId;
   public $clientSecret;
   public $developerKey;
@@ -37,7 +33,7 @@ class Google_OAuth2 extends Google_Auth {
   public $approvalPrompt = 'force';
   public $requestVisibleActions;
 
-  /** @var Google_AssertionCredentials $assertionCredentials */
+  /** @var Yoast_Google_AssertionCredentials $assertionCredentials */
   public $assertionCredentials;
 
   const OAUTH2_REVOKE_URI = 'https://accounts.google.com/o/oauth2/revoke';
@@ -84,7 +80,7 @@ class Google_OAuth2 extends Google_Auth {
   /**
    * @param $service
    * @param string|null $code
-   * @throws Google_AuthException
+   * @throws Yoast_Google_AuthException
    * @return string
    */
   public function authenticate($service, $code = null) {
@@ -95,7 +91,7 @@ class Google_OAuth2 extends Google_Auth {
 
     if ($code) {
       // We got here from the redirect from a successful authorization grant, fetch the access token
-      $request = Google_Client::$io->makeRequest(new Google_HttpRequest(self::OAUTH2_TOKEN_URI, 'POST', array(), array(
+      $request = Yoast_Google_Client::$io->makeRequest(new Yoast_Google_HttpRequest(self::OAUTH2_TOKEN_URI, 'POST', array(), array(
           'code' => $code,
           'grant_type' => 'authorization_code',
           'redirect_uri' => $this->redirectUri,
@@ -114,7 +110,7 @@ class Google_OAuth2 extends Google_Auth {
         if ($decodedResponse != null && $decodedResponse['error']) {
           $response = $decodedResponse['error'];
         }
-        throw new Google_AuthException("Error fetching OAuth2 access token, message: '$response'", $request->getResponseHttpCode());
+        throw new Yoast_Google_AuthException("Error fetching OAuth2 access token, message: '$response'", $request->getResponseHttpCode());
       }
     }
 
@@ -156,15 +152,15 @@ class Google_OAuth2 extends Google_Auth {
 
   /**
    * @param string $token
-   * @throws Google_AuthException
+   * @throws Yoast_Google_AuthException
    */
   public function setAccessToken($token) {
     $token = json_decode($token, true);
     if ($token == null) {
-      throw new Google_AuthException('Could not json decode the token');
+      throw new Yoast_Google_AuthException('Could not json decode the token');
     }
     if (! isset($token['access_token'])) {
-      throw new Google_AuthException("Invalid token format");
+      throw new Yoast_Google_AuthException("Invalid token format");
     }
     $this->token = $token;
   }
@@ -189,17 +185,17 @@ class Google_OAuth2 extends Google_Auth {
     $this->approvalPrompt = $approvalPrompt;
   }
 
-  public function setAssertionCredentials(Google_AssertionCredentials $creds) {
+  public function setAssertionCredentials(Yoast_Google_AssertionCredentials $creds) {
     $this->assertionCredentials = $creds;
   }
 
   /**
    * Include an accessToken in a given apiHttpRequest.
-   * @param Google_HttpRequest $request
-   * @return Google_HttpRequest
-   * @throws Google_AuthException
+   * @param Yoast_Google_HttpRequest $request
+   * @return Yoast_Google_HttpRequest
+   * @throws Yoast_Google_AuthException
    */
-  public function sign(Google_HttpRequest $request) {
+  public function sign(Yoast_Google_HttpRequest $request) {
     // add the developer key to the request before signing it
     if ($this->developerKey) {
       $requestUrl = $request->getUrl();
@@ -220,7 +216,7 @@ class Google_OAuth2 extends Google_Auth {
         $this->refreshTokenWithAssertion();
       } else {
         if (! array_key_exists('refresh_token', $this->token)) {
-            throw new Google_AuthException("The OAuth 2.0 access token has expired, "
+            throw new Yoast_Google_AuthException("The OAuth 2.0 access token has expired, "
                 . "and a refresh token is not available. Refresh tokens are not "
                 . "returned for responses that were auto-approved.");
         }
@@ -252,7 +248,7 @@ class Google_OAuth2 extends Google_Auth {
 
   /**
    * Fetches a fresh access token with a given assertion token.
-   * @param Google_AssertionCredentials $assertionCredentials optional.
+   * @param Yoast_Google_AssertionCredentials $assertionCredentials optional.
    * @return void
    */
   public function refreshTokenWithAssertion($assertionCredentials = null) {
@@ -268,33 +264,33 @@ class Google_OAuth2 extends Google_Auth {
   }
 
   private function refreshTokenRequest($params) {
-    $http = new Google_HttpRequest(self::OAUTH2_TOKEN_URI, 'POST', array(), $params);
-    $request = Google_Client::$io->makeRequest($http);
+    $http = new Yoast_Google_HttpRequest(self::OAUTH2_TOKEN_URI, 'POST', array(), $params);
+    $request = Yoast_Google_Client::$io->makeRequest($http);
 
     $code = $request->getResponseHttpCode();
     $body = $request->getResponseBody();
     if (200 == $code) {
       $token = json_decode($body, true);
       if ($token == null) {
-        throw new Google_AuthException("Could not json decode the access token");
+        throw new Yoast_Google_AuthException("Could not json decode the access token");
       }
 
       if (! isset($token['access_token']) || ! isset($token['expires_in'])) {
-        throw new Google_AuthException("Invalid token format");
+        throw new Yoast_Google_AuthException("Invalid token format");
       }
 
       $this->token['access_token'] = $token['access_token'];
       $this->token['expires_in'] = $token['expires_in'];
       $this->token['created'] = time();
     } else {
-      throw new Google_AuthException("Error refreshing the OAuth2 token, message: '$body'", $code);
+      throw new Yoast_Google_AuthException("Error refreshing the OAuth2 token, message: '$body'", $code);
     }
   }
 
     /**
      * Revoke an OAuth2 access token or refresh token. This method will revoke the current access
      * token, if a token isn't provided.
-     * @throws Google_AuthException
+     * @throws Yoast_Google_AuthException
      * @param string|null $token The token (access token or a refresh token) that should be revoked.
      * @return boolean Returns True if the revocation was successful, otherwise False.
      */
@@ -302,8 +298,8 @@ class Google_OAuth2 extends Google_Auth {
     if (!$token) {
       $token = $this->token['access_token'];
     }
-    $request = new Google_HttpRequest(self::OAUTH2_REVOKE_URI, 'POST', array(), "token=$token");
-    $response = Google_Client::$io->makeRequest($request);
+    $request = new Yoast_Google_HttpRequest(self::OAUTH2_REVOKE_URI, 'POST', array(), "token=$token");
+    $response = Yoast_Google_Client::$io->makeRequest($request);
     $code = $response->getResponseHttpCode();
     if ($code == 200) {
       $this->token = null;
@@ -334,7 +330,7 @@ class Google_OAuth2 extends Google_Auth {
   // are PEM encoded certificates.
   private function getFederatedSignOnCerts() {
     // This relies on makeRequest caching certificate responses.
-    $request = Google_Client::$io->makeRequest(new Google_HttpRequest(
+    $request = Yoast_Google_Client::$io->makeRequest(new Yoast_Google_HttpRequest(
         self::OAUTH2_FEDERATED_SIGNON_CERTS_URL));
     if ($request->getResponseHttpCode() == 200) {
       $certs = json_decode($request->getResponseBody(), true);
@@ -342,7 +338,7 @@ class Google_OAuth2 extends Google_Auth {
         return $certs;
       }
     }
-    throw new Google_AuthException(
+    throw new Yoast_Google_AuthException(
         "Failed to retrieve verification certificates: '" .
             $request->getResponseBody() . "'.",
         $request->getResponseHttpCode());
@@ -356,7 +352,7 @@ class Google_OAuth2 extends Google_Auth {
    *
    * @param $id_token
    * @param $audience
-   * @return Google_LoginTicket
+   * @return Yoast_Google_LoginTicket
    */
   public function verifyIdToken($id_token = null, $audience = null) {
     if (!$id_token) {
@@ -375,28 +371,28 @@ class Google_OAuth2 extends Google_Auth {
   function verifySignedJwtWithCerts($jwt, $certs, $required_audience) {
     $segments = explode(".", $jwt);
     if (count($segments) != 3) {
-      throw new Google_AuthException("Wrong number of segments in token: $jwt");
+      throw new Yoast_Google_AuthException("Wrong number of segments in token: $jwt");
     }
     $signed = $segments[0] . "." . $segments[1];
-    $signature = Google_Utils::urlSafeB64Decode($segments[2]);
+    $signature = Yoast_Google_Utils::urlSafeB64Decode($segments[2]);
 
     // Parse envelope.
     $envelope = json_decode(Google_Utils::urlSafeB64Decode($segments[0]), true);
     if (!$envelope) {
-      throw new Google_AuthException("Can't parse token envelope: " . $segments[0]);
+      throw new Yoast_Google_AuthException("Can't parse token envelope: " . $segments[0]);
     }
 
     // Parse token
-    $json_body = Google_Utils::urlSafeB64Decode($segments[1]);
+    $json_body = Yoast_Google_Utils::urlSafeB64Decode($segments[1]);
     $payload = json_decode($json_body, true);
     if (!$payload) {
-      throw new Google_AuthException("Can't parse token payload: " . $segments[1]);
+      throw new Yoast_Google_AuthException("Can't parse token payload: " . $segments[1]);
     }
 
     // Check signature
     $verified = false;
     foreach ($certs as $keyName => $pem) {
-      $public_key = new Google_PemVerifier($pem);
+      $public_key = new Yoast_Google_PemVerifier($pem);
       if ($public_key->verify($signed, $signature)) {
         $verified = true;
         break;
@@ -404,7 +400,7 @@ class Google_OAuth2 extends Google_Auth {
     }
 
     if (!$verified) {
-      throw new Google_AuthException("Invalid token signature: $jwt");
+      throw new Yoast_Google_AuthException("Invalid token signature: $jwt");
     }
 
     // Check issued-at timestamp
@@ -413,7 +409,7 @@ class Google_OAuth2 extends Google_Auth {
       $iat = $payload["iat"];
     }
     if (!$iat) {
-      throw new Google_AuthException("No issue time in token: $json_body");
+      throw new Yoast_Google_AuthException("No issue time in token: $json_body");
     }
     $earliest = $iat - self::CLOCK_SKEW_SECS;
 
@@ -424,20 +420,20 @@ class Google_OAuth2 extends Google_Auth {
       $exp = $payload["exp"];
     }
     if (!$exp) {
-      throw new Google_AuthException("No expiration time in token: $json_body");
+      throw new Yoast_Google_AuthException("No expiration time in token: $json_body");
     }
     if ($exp >= $now + self::MAX_TOKEN_LIFETIME_SECS) {
-      throw new Google_AuthException(
+      throw new Yoast_Google_AuthException(
           "Expiration time too far in future: $json_body");
     }
 
     $latest = $exp + self::CLOCK_SKEW_SECS;
     if ($now < $earliest) {
-      throw new Google_AuthException(
+      throw new Yoast_Google_AuthException(
           "Token used too early, $now < $earliest: $json_body");
     }
     if ($now > $latest) {
-      throw new Google_AuthException(
+      throw new Yoast_Google_AuthException(
           "Token used too late, $now > $latest: $json_body");
     }
 
@@ -446,10 +442,10 @@ class Google_OAuth2 extends Google_Auth {
     // Check audience
     $aud = $payload["aud"];
     if ($aud != $required_audience) {
-      throw new Google_AuthException("Wrong recipient, $aud != $required_audience: $json_body");
+      throw new Yoast_Google_AuthException("Wrong recipient, $aud != $required_audience: $json_body");
     }
 
     // All good.
-    return new Google_LoginTicket($envelope, $payload);
+    return new Yoast_Google_LoginTicket($envelope, $payload);
   }
 }

@@ -15,33 +15,28 @@
  * limitations under the License.
  */
 
-require_once 'io/Google_HttpRequest.php';
-require_once 'io/Google_HttpStreamIO.php';
-require_once 'io/Google_CurlIO.php';
-require_once 'io/Google_REST.php';
-
 /**
  * Abstract IO class
  *
  * @author Chris Chabot <chabotc@google.com>
  */
-abstract class Google_IO {
+abstract class Yoast_Google_IO {
   const CONNECTION_ESTABLISHED = "HTTP/1.0 200 Connection established\r\n\r\n";
   const FORM_URLENCODED = 'application/x-www-form-urlencoded';
   /**
    * An utility function that first calls $this->auth->sign($request) and then executes makeRequest()
    * on that signed request. Used for when a request should be authenticated
-   * @param Google_HttpRequest $request
-   * @return Google_HttpRequest $request
+   * @param Yoast_Google_HttpRequest $request
+   * @return Yoast_Google_HttpRequest $request
    */
-  abstract function authenticatedRequest(Google_HttpRequest $request);
+  abstract function authenticatedRequest(Yoast_Google_HttpRequest $request);
 
   /**
    * Executes a apIHttpRequest and returns the resulting populated httpRequest
-   * @param Google_HttpRequest $request
-   * @return Google_HttpRequest $request
+   * @param Yoast_Google_HttpRequest $request
+   * @return Yoast_Google_HttpRequest $request
    */
-  abstract function makeRequest(Google_HttpRequest $request);
+  abstract function makeRequest(Yoast_Google_HttpRequest $request);
 
   /**
    * Set options that update the transport implementation's behavior.
@@ -52,14 +47,14 @@ abstract class Google_IO {
   /**
    * @visible for testing.
    * Cache the response to an HTTP request if it is cacheable.
-   * @param Google_HttpRequest $request
+   * @param Yoast_Google_HttpRequest $request
    * @return bool Returns true if the insertion was successful.
    * Otherwise, return false.
    */
-  protected function setCachedRequest(Google_HttpRequest $request) {
+  protected function setCachedRequest(Yoast_Google_HttpRequest $request) {
     // Determine if the request is cacheable.
-    if (Google_CacheParser::isResponseCacheable($request)) {
-      Google_Client::$cache->set($request->getCacheKey(), $request);
+    if (Yoast_Google_CacheParser::isResponseCacheable($request)) {
+      Yoast_Google_Client::$cache->set($request->getCacheKey(), $request);
       return true;
     }
 
@@ -68,25 +63,25 @@ abstract class Google_IO {
 
   /**
    * @visible for testing.
-   * @param Google_HttpRequest $request
-   * @return Google_HttpRequest|bool Returns the cached object or
+   * @param Yoast_Google_HttpRequest $request
+   * @return Yoast_Google_HttpRequest|bool Returns the cached object or
    * false if the operation was unsuccessful.
    */
-  protected function getCachedRequest(Google_HttpRequest $request) {
-    if (false == Google_CacheParser::isRequestCacheable($request)) {
+  protected function getCachedRequest(Yoast_Google_HttpRequest $request) {
+    if (false == Yoast_Google_CacheParser::isRequestCacheable($request)) {
       false;
     }
 
-    return Google_Client::$cache->get($request->getCacheKey());
+    return Yoast_Google_Client::$cache->get($request->getCacheKey());
   }
 
   /**
    * @visible for testing
    * Process an http request that contains an enclosed entity.
-   * @param Google_HttpRequest $request
-   * @return Google_HttpRequest Processed request with the enclosed entity.
+   * @param Yoast_Google_HttpRequest $request
+   * @return Yoast_Google_HttpRequest Processed request with the enclosed entity.
    */
-  protected function processEntityRequest(Google_HttpRequest $request) {
+  protected function processEntityRequest(Yoast_Google_HttpRequest $request) {
     $postBody = $request->getPostBody();
     $contentType = $request->getRequestHeader("content-type");
 
@@ -114,13 +109,13 @@ abstract class Google_IO {
   /**
    * Check if an already cached request must be revalidated, and if so update
    * the request with the correct ETag headers.
-   * @param Google_HttpRequest $cached A previously cached response.
-   * @param Google_HttpRequest $request The outbound request.
+   * @param Yoast_Google_HttpRequest $cached A previously cached response.
+   * @param Yoast_Google_HttpRequest $request The outbound request.
    * return bool If the cached object needs to be revalidated, false if it is
    * still current and can be re-used.
    */
   protected function checkMustRevaliadateCachedRequest($cached, $request) {
-    if (Google_CacheParser::mustRevalidate($cached)) {
+    if (Yoast_Google_CacheParser::mustRevalidate($cached)) {
       $addHeaders = array();
       if ($cached->getResponseHeader('etag')) {
         // [13.3.4] If an entity tag has been provided by the origin server,
@@ -139,7 +134,7 @@ abstract class Google_IO {
 
   /**
    * Update a cached request, using the headers from the last response.
-   * @param Google_HttpRequest $cached A previously cached response.
+   * @param Yoast_Google_HttpRequest $cached A previously cached response.
    * @param mixed Associative array of response headers from the last request.
    */
   protected function updateCachedRequest($cached, $responseHeaders) {

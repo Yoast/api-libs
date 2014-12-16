@@ -15,15 +15,12 @@
  * limitations under the License.
  */
 
-require_once "Google_FileCache.php";
-require_once "Google_MemcacheCache.php";
-
 /**
  * Abstract storage class
  *
  * @author Chris Chabot <chabotc@google.com>
  */
-abstract class Google_Cache {
+abstract class Yoast_Google_Cache {
 
   /**
    * Retrieves the data for the given key, or false if they

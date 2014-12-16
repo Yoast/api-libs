@@ -22,9 +22,7 @@
  * @author Chirag Shah <chirags@google.com>
  */
 
-require_once 'Google_CacheParser.php';
-
-class Google_CurlIO extends Google_IO {
+class Yoast_Google_CurlIO extends Yoast_Google_IO {
   private static $ENTITY_HTTP_METHODS = array("POST" => null, "PUT" => null);
   private static $HOP_BY_HOP = array(
       'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
@@ -55,24 +53,24 @@ class Google_CurlIO extends Google_IO {
    * (which can modify the request in what ever way fits the auth mechanism)
    * and then calls apiCurlIO::makeRequest on the signed request
    *
-   * @param Google_HttpRequest $request
-   * @return Google_HttpRequest The resulting HTTP response including the
+   * @param Yoast_Google_HttpRequest $request
+   * @return Yoast_Google_HttpRequest The resulting HTTP response including the
    * responseHttpCode, responseHeaders and responseBody.
    */
-  public function authenticatedRequest(Google_HttpRequest $request) {
-    $request = Google_Client::$auth->sign($request);
+  public function authenticatedRequest(Yoast_Google_HttpRequest $request) {
+    $request = Yoast_Google_Client::$auth->sign($request);
     return $this->makeRequest($request);
   }
 
   /**
    * Execute a apiHttpRequest
    *
-   * @param Google_HttpRequest $request the http request to be executed
-   * @return Google_HttpRequest http request with the response http code, response
+   * @param Yoast_Google_HttpRequest $request the http request to be executed
+   * @return Yoast_Google_HttpRequest http request with the response http code, response
    * headers and response body filled in
-   * @throws Google_IOException on curl or IO error
+   * @throws Yoast_Google_IOException on curl or IO error
    */
-  public function makeRequest(Google_HttpRequest $request) {
+  public function makeRequest(Yoast_Google_HttpRequest $request) {
     // First, check to see if we have a valid cached version.
     $cached = $this->getCachedRequest($request);
     if ($cached !== false) {
@@ -120,7 +118,7 @@ class Google_CurlIO extends Google_IO {
     $curlError = curl_error($ch);
     curl_close($ch);
     if ($curlErrorNum != CURLE_OK) {
-      throw new Google_IOException("HTTP Error: ($respHttpCode) $curlError");
+      throw new Yoast_Google_IOException("HTTP Error: ($respHttpCode) $curlError");
     }
 
     // Parse out the raw response into usable bits
@@ -162,7 +160,7 @@ class Google_CurlIO extends Google_IO {
    * @param $headerSize
    * @return array
    */
-  private static function parseHttpResponse($respData, $headerSize) {
+  public static function parseHttpResponse($respData, $headerSize) {
     if (stripos($respData, parent::CONNECTION_ESTABLISHED) !== false) {
       $respData = str_ireplace(parent::CONNECTION_ESTABLISHED, '', $respData);
     }
@@ -178,7 +176,7 @@ class Google_CurlIO extends Google_IO {
     return array($responseHeaders, $responseBody);
   }
 
-  private static function parseResponseHeaders($rawHeaders) {
+  public static function parseResponseHeaders($rawHeaders) {
     $responseHeaders = array();
 
     $responseHeaderLines = explode("\r\n", $rawHeaders);

@@ -20,7 +20,7 @@
  *
  * @author Brian Eaton <beaton@google.com>
  */
-class Google_LoginTicket {
+class Yoast_Google_LoginTicket {
   const USER_ATTR = "id";
 
   // Information from id token envelope.
@@ -42,14 +42,14 @@ class Google_LoginTicket {
 
   /**
    * Returns the numeric identifier for the user.
-   * @throws Google_AuthException
+   * @throws Yoast_Google_AuthException
    * @return
    */
   public function getUserId() {
     if (array_key_exists(self::USER_ATTR, $this->payload)) {
       return $this->payload[self::USER_ATTR];
     }
-    throw new Google_AuthException("No user_id in token");
+    throw new Yoast_Google_AuthException("No user_id in token");
   }
 
   /**
