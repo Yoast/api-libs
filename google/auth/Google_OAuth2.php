@@ -377,7 +377,7 @@ class Yoast_Google_OAuth2 extends Yoast_Google_Auth {
     $signature = Yoast_Google_Utils::urlSafeB64Decode($segments[2]);
 
     // Parse envelope.
-    $envelope = json_decode(Google_Utils::urlSafeB64Decode($segments[0]), true);
+    $envelope = json_decode(Yoast_Google_Utils::urlSafeB64Decode($segments[0]), true);
     if (!$envelope) {
       throw new Yoast_Google_AuthException("Can't parse token envelope: " . $segments[0]);
     }

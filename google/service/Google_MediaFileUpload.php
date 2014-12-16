@@ -209,7 +209,7 @@ class Yoast_Google_MediaFileUpload {
   }
 
 
-  public function nextChunk(Google_HttpRequest $req, $chunk=false) {
+  public function nextChunk(Yoast_Google_HttpRequest $req, $chunk=false) {
     if (false == $this->resumeUri) {
       $this->resumeUri = $this->getResumeUri($req);
     }
