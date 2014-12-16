@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-class Google_Service {
+class Yoast_Google_Service {
   public $version;
   public $servicePath;
   public $resource;

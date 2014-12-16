@@ -21,18 +21,18 @@
  * @author Chris Chabot <chabotc@google.com>
  * @author Chirag Shah <chirags@google.com>
  */
-class Google_REST {
+class Yoast_Google_REST {
   /**
    * Executes a apiServiceRequest using a RESTful call by transforming it into
    * an apiHttpRequest, and executed via apiIO::authenticatedRequest().
    *
-   * @param Google_HttpRequest $req
+   * @param Yoast_Google_HttpRequest $req
    * @return array decoded result
-   * @throws Google_ServiceException on server side error (ie: not authenticated,
+   * @throws Yoast_Google_ServiceException on server side error (ie: not authenticated,
    *  invalid or malformed post body, invalid url)
    */
-  static public function execute(Google_HttpRequest $req) {
-    $httpRequest = Google_Client::$io->makeRequest($req);
+  static public function execute(Yoast_Google_HttpRequest $req) {
+    $httpRequest = Yoast_Google_Client::$io->makeRequest($req);
     $decodedResponse = self::decodeHttpResponse($httpRequest);
     $ret = isset($decodedResponse['data'])
         ? $decodedResponse['data'] : $decodedResponse;
@@ -43,8 +43,8 @@ class Google_REST {
   /**
    * Decode an HTTP Response.
    * @static
-   * @throws Google_ServiceException
-   * @param Google_HttpRequest $response The http response to be decoded.
+   * @throws Yoast_Google_ServiceException
+   * @param Yoast_Google_HttpRequest $response The http response to be decoded.
    * @return mixed|null
    */
   public static function decodeHttpResponse($response) {
@@ -63,14 +63,14 @@ class Google_REST {
         $err .= ": ($code) $body";
       }
 
-      throw new Google_ServiceException($err, $code, null, $decoded['error']['errors']);
+      throw new Yoast_Google_ServiceException($err, $code, null, $decoded['error']['errors']);
     }
     
     // Only attempt to decode the response, if the response code wasn't (204) 'no content'
     if ($code != '204') {
       $decoded = json_decode($body, true);
       if ($decoded === null || $decoded === "") {
-        throw new Google_ServiceException("Invalid json in service response: $body");
+        throw new Yoast_Google_ServiceException("Invalid json in service response: $body");
       }
     }
     return $decoded;

@@ -20,7 +20,7 @@
  *
  * @author Brian Eaton <beaton@google.com>
  */
-abstract class Google_Signer {
+abstract class Yoast_Google_Signer {
   /**
    * Signs data, returns the signature as binary data.
    */

@@ -23,7 +23,7 @@
  * @author Chirag Shah <chirags@google.com>
  *
  */
-class Google_HttpRequest {
+class Yoast_Google_HttpRequest {
   const USER_AGENT_SUFFIX = "google-api-php-client/0.6.5";
   private $batchHeaders = array(
     'Content-Type' => 'application/http',
@@ -119,7 +119,7 @@ class Google_HttpRequest {
    * to be normalized.
    */
   public function setResponseHeaders($headers) {
-    $headers = Google_Utils::normalize($headers);
+    $headers = Yoast_Google_Utils::normalize($headers);
     if ($this->responseHeaders) {
       $headers = array_merge($this->responseHeaders, $headers);
     }
@@ -215,7 +215,7 @@ class Google_HttpRequest {
    * to be set and normalized.
    */
   public function setRequestHeaders($headers) {
-    $headers = Google_Utils::normalize($headers);
+    $headers = Yoast_Google_Utils::normalize($headers);
     if ($this->requestHeaders) {
       $headers = array_merge($this->requestHeaders, $headers);
     }

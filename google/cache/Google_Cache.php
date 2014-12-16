@@ -20,7 +20,7 @@
  *
  * @author Chris Chabot <chabotc@google.com>
  */
-abstract class Google_Cache {
+abstract class Yoast_Google_Cache {
 
   /**
    * Retrieves the data for the given key, or false if they

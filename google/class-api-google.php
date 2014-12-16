@@ -50,6 +50,7 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 				'yoast_google_verifier'        => 'auth/Google_Verifier',
 				'yoast_google_loginticket'     => 'auth/Google_LoginTicket',
 				'yoast_google_utils'           => 'service/Google_Utils',
+				'yoast_google_pemverifier'     => 'auth/Google_PemVerifier',
 
 				// Caching
 				'yoast_google_filecache'       => 'cache/Google_FileCache',
@@ -64,7 +65,6 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 				// Wordpress
 				'yoast_wp_io'                  => 'io/Google_WPIO',
 				'yoast_wp_cache'               => 'cache/Google_WPCache',
-
 
 				// REPLACE ME!
 				'yoast_curl_io'                => 'io/Google_CurlIO',

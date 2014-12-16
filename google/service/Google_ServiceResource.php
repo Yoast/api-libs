@@ -24,7 +24,7 @@
  * @author Chirag Shah <chirags@google.com>
  *
  */
-class Google_ServiceResource {
+class Yoast_Google_ServiceResource {
   // Valid query parameters that work, but don't appear in discovery.
   private $stackParameters = array(
       'alt' => array('type' => 'string', 'location' => 'query'),
@@ -41,7 +41,7 @@ class Google_ServiceResource {
       'mediaUpload' => array('type' => 'complex', 'location' => 'query'),
   );
 
-  /** @var Google_Service $service */
+  /** @var Yoast_Google_Service $service */
   private $service;
 
   /** @var string $serviceName */
@@ -63,12 +63,12 @@ class Google_ServiceResource {
   /**
    * @param $name
    * @param $arguments
-   * @return Google_HttpRequest|array
-   * @throws Google_Exception
+   * @return Yoast_Google_HttpRequest|array
+   * @throws Yoast_Google_Exception
    */
   public function __call($name, $arguments) {
     if (! isset($this->methods[$name])) {
-      throw new Google_Exception("Unknown function: {$this->serviceName}->{$this->resourceName}->{$name}()");
+      throw new Yoast_Google_Exception("Unknown function: {$this->serviceName}->{$this->resourceName}->{$name}()");
     }
     $method = $this->methods[$name];
     $parameters = $arguments[0];
@@ -108,13 +108,13 @@ class Google_ServiceResource {
     $method['parameters'] = array_merge($method['parameters'], $this->stackParameters);
     foreach ($parameters as $key => $val) {
       if ($key != 'postBody' && ! isset($method['parameters'][$key])) {
-        throw new Google_Exception("($name) unknown parameter: '$key'");
+        throw new Yoast_Google_Exception("($name) unknown parameter: '$key'");
       }
     }
     if (isset($method['parameters'])) {
       foreach ($method['parameters'] as $paramName => $paramSpec) {
         if (isset($paramSpec['required']) && $paramSpec['required'] && ! isset($parameters[$paramName])) {
-          throw new Google_Exception("($name) missing required param: '$paramName'");
+          throw new Yoast_Google_Exception("($name) missing required param: '$paramName'");
         }
         if (isset($parameters[$paramName])) {
           $value = $parameters[$paramName];
@@ -142,7 +142,7 @@ class Google_ServiceResource {
     // Process Media Request
     $contentType = false;
     if (isset($method['mediaUpload'])) {
-      $media = Google_MediaFileUpload::process($postBody, $parameters);
+      $media = Yoast_Google_MediaFileUpload::process($postBody, $parameters);
       if ($media) {
         $contentType = isset($media['content-type']) ? $media['content-type']: null;
         $postBody = isset($media['postBody']) ? $media['postBody'] : null;
@@ -151,27 +151,27 @@ class Google_ServiceResource {
       }
     }
 
-    $url = Google_REST::createRequestUri($servicePath, $method['path'], $parameters);
-    $httpRequest = new Google_HttpRequest($url, $method['httpMethod'], null, $postBody);
+    $url = Yoast_Google_REST::createRequestUri($servicePath, $method['path'], $parameters);
+    $httpRequest = new Yoast_Google_HttpRequest($url, $method['httpMethod'], null, $postBody);
     if ($postBody) {
       $contentTypeHeader = array();
       if (isset($contentType) && $contentType) {
         $contentTypeHeader['content-type'] = $contentType;
       } else {
         $contentTypeHeader['content-type'] = 'application/json; charset=UTF-8';
-        $contentTypeHeader['content-length'] = Google_Utils::getStrLen($postBody);
+        $contentTypeHeader['content-length'] = Yoast_Google_Utils::getStrLen($postBody);
       }
       $httpRequest->setRequestHeaders($contentTypeHeader);
     }
 
-    $httpRequest = Google_Client::$auth->sign($httpRequest);
-    if (Google_Client::$useBatch) {
+    $httpRequest = Yoast_Google_Client::$auth->sign($httpRequest);
+    if (Yoast_Google_Client::$useBatch) {
       return $httpRequest;
     }
 
     // Terminate immediately if this is a resumable request.
     if (isset($parameters['uploadType']['value'])
-        && Google_MediaFileUpload::UPLOAD_RESUMABLE_TYPE == $parameters['uploadType']['value']) {
+        && Yoast_Google_MediaFileUpload::UPLOAD_RESUMABLE_TYPE == $parameters['uploadType']['value']) {
       $contentTypeHeader = array();
       if (isset($contentType) && $contentType) {
         $contentTypeHeader['content-type'] = $contentType;
@@ -183,7 +183,7 @@ class Google_ServiceResource {
       return $httpRequest;
     }
 
-    return Google_REST::execute($httpRequest);
+    return Yoast_Google_REST::execute($httpRequest);
   }
 
   public  function useObjects() {

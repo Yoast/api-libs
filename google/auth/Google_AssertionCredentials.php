@@ -20,7 +20,7 @@
  *
  * @author Chirag Shah <chirags@google.com>
  */
-class Google_AssertionCredentials {
+class Yoast_Google_AssertionCredentials {
   const MAX_TOKEN_LIFETIME_SECS = 3600;
 
   public $serviceAccountName;
@@ -64,7 +64,7 @@ class Google_AssertionCredentials {
     $now = time();
 
     $jwtParams = array(
-          'aud' => Google_OAuth2::OAUTH2_TOKEN_URI,
+          'aud' => Yoast_Google_OAuth2::OAUTH2_TOKEN_URI,
           'scope' => $this->scopes,
           'iat' => $now,
           'exp' => $now + self::MAX_TOKEN_LIFETIME_SECS,
@@ -89,14 +89,14 @@ class Google_AssertionCredentials {
     $header = array('typ' => 'JWT', 'alg' => 'RS256');
 
     $segments = array(
-      Google_Utils::urlSafeB64Encode(json_encode($header)),
-      Google_Utils::urlSafeB64Encode(json_encode($payload))
+        Yoast_Google_Utils::urlSafeB64Encode(json_encode($header)),
+        Yoast_Google_Utils::urlSafeB64Encode(json_encode($payload))
     );
 
     $signingInput = implode('.', $segments);
-    $signer = new Google_P12Signer($this->privateKey, $this->privateKeyPassword);
+    $signer = new Yoast_Google_P12Signer($this->privateKey, $this->privateKeyPassword);
     $signature = $signer->sign($signingInput);
-    $segments[] = Google_Utils::urlSafeB64Encode($signature);
+    $segments[] = Yoast_Google_Utils::urlSafeB64Encode($signature);
 
     return implode(".", $segments);
   }

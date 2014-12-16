@@ -23,11 +23,11 @@
  *
  * @author Chris Chabot <chabotc@google.com>
  */
-class Google_APCCache extends Google_Cache {
+class Yoast_Google_APCCache extends Yoast_Google_Cache {
 
   public function __construct() {
     if (! function_exists('apc_add')) {
-      throw new Google_CacheException("Apc functions not available");
+      throw new Yoast_Google_CacheException("Apc functions not available");
     }
   }
 
@@ -84,7 +84,7 @@ class Google_APCCache extends Google_Cache {
    */
   public function set($key, $value) {
     if (@apc_store($key, array('time' => time(), 'data' => serialize($value))) == false) {
-      throw new Google_CacheException("Couldn't store data");
+      throw new Yoast_Google_CacheException("Couldn't store data");
     }
   }
 

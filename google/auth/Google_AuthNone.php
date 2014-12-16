@@ -20,7 +20,7 @@
  * @author Chris Chabot <chabotc@google.com>
  * @author Chirag Shah <chirags@google.com>
  */
-class Google_AuthNone extends Google_Auth {
+class Yoast_Google_AuthNone extends Yoast_Google_Auth {
   public $key = null;
 
   public function __construct() {
@@ -38,7 +38,7 @@ class Google_AuthNone extends Google_Auth {
   public function refreshToken($refreshToken) {/* noop*/}
   public function revokeToken() {/* noop*/}
 
-  public function sign(Google_HttpRequest $request) {
+  public function sign(Yoast_Google_HttpRequest $request) {
     if ($this->key) {
       $request->setUrl($request->getUrl() . ((strpos($request->getUrl(), '?') === false) ? '?' : '&')
           . 'key='.urlencode($this->key));

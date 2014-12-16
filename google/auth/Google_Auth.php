@@ -20,9 +20,9 @@
  * @author Chris Chabot <chabotc@google.com>
  *
  */
-abstract class Google_Auth {
+abstract class Yoast_Google_Auth {
   abstract public function authenticate($service);
-  abstract public function sign(Google_HttpRequest $request);
+  abstract public function sign(Yoast_Google_HttpRequest $request);
   abstract public function createAuthUrl($scope);
 
   abstract public function getAccessToken();

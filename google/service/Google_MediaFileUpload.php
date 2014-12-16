@@ -19,7 +19,7 @@
  * @author Chirag Shah <chirags@google.com>
  *
  */
-class Google_MediaFileUpload {
+class Yoast_Google_MediaFileUpload {
   const UPLOAD_MEDIA_TYPE = 'media';
   const UPLOAD_MULTIPART_TYPE = 'multipart';
   const UPLOAD_RESUMABLE_TYPE = 'resumable';
@@ -226,37 +226,37 @@ class Google_MediaFileUpload {
       'expect' => '',
     );
 
-    $httpRequest = new Google_HttpRequest($this->resumeUri, 'PUT', $headers, $chunk);
-    $response = Google_Client::$io->authenticatedRequest($httpRequest);
+    $httpRequest = new Yoast_Google_HttpRequest($this->resumeUri, 'PUT', $headers, $chunk);
+    $response = Yoast_Google_Client::$io->authenticatedRequest($httpRequest);
     $code = $response->getResponseHttpCode();
     if (308 == $code) {
       $range = explode('-', $response->getResponseHeader('range'));
       $this->progress = $range[1] + 1;
       return false;
     } else {
-      return Google_REST::decodeHttpResponse($response);
+      return Yoast_Google_REST::decodeHttpResponse($response);
     }
   }
 
-  private function getResumeUri(Google_HttpRequest $httpRequest) {
+  private function getResumeUri(Yoast_Google_HttpRequest $httpRequest) {
     $result = null;
     $body = $httpRequest->getPostBody();
     if ($body) {
       $httpRequest->setRequestHeaders(array(
         'content-type' => 'application/json; charset=UTF-8',
-        'content-length' => Google_Utils::getStrLen($body),
+        'content-length' => Yoast_Google_Utils::getStrLen($body),
         'x-upload-content-type' => $this->mimeType,
         'x-upload-content-length' => $this->size,
         'expect' => '',
       ));
     }
 
-    $response = Google_Client::$io->makeRequest($httpRequest);
+    $response = Yoast_Google_Client::$io->makeRequest($httpRequest);
     $location = $response->getResponseHeader('location');
     $code = $response->getResponseHttpCode();
     if (200 == $code && true == $location) {
       return $location;
     }
-    throw new Google_Exception("Failed to start the resumable upload");
+    throw new Yoast_Google_Exception("Failed to start the resumable upload");
   }
 }
