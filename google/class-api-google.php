@@ -22,6 +22,8 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 
 		/**
 		 * Autoload the API Google class
+		 *
+		 * @param string $class_name - The class that should be loaded
 		 */
 		private function autoload_api_google_files( $class_name ) {
 			$path        = dirname( __FILE__ );

@@ -22,6 +22,8 @@ if ( ! class_exists( 'Yoast_Api_Googleanalytics' ) ) {
 
 		/**
 		 * Autoload the API Oauth classes
+		 * 
+		 * @param string $class_name - The class that should be loaded
 		 */
 		private function autoload_api_oauth_files( $class_name ) {
 			$path        = dirname( __FILE__ );
