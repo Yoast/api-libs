@@ -23,8 +23,9 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 		/**
 		 * Autoload the API Google class
 		 */
-		private function autoload_api_google_files() {
+		private function autoload_api_google_files( $classname ) {
 			$path        = dirname( __FILE__ );
+			$classname   = strtolower( $classname );
 			$oauth_files = array(
 				// Main requires
 				'yoast_google_client'          => 'Google_Client',
@@ -58,16 +59,22 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 				'yoast_httpstream_io'          => 'io/Google_HttpStreamIO',
 				'yoast_google_rest'            => 'io/Google_REST',
 
+				// Wordpress
+				'yoast_wp_io'                  => 'io/Google_WPIO',
+				'yoast_wp_cache'               => 'cache/Google_WPCache',
+
+
 				// REPLACE ME!
 				'yoast_curl_io'                => 'io/Google_CurlIO',
 			);
 
-
-			foreach ( $oauth_files as $key => $name ) {
-				if ( file_exists( $path . '/' . $name . '.php' ) ) {
-					require_once( $path . '/' . $name . '.php' );
+			if ( ! empty( $oauth_files[$classname] ) ) {
+				if ( file_exists( $path . '/' . $oauth_files[$classname] . '.php' ) ) {
+					require_once( $path . '/' . $oauth_files[$classname] . '.php' );
 				}
+
 			}
+
 		}
 
 	}
