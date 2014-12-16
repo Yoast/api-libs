@@ -29,7 +29,7 @@ if ( ! class_exists( 'Yoast_Api_Googleanalytics' ) ) {
 			$path        = dirname( __FILE__ );
 			$class_name  = strtolower( $class_name );
 			$oauth_files = array(
-				'yoast_api_googleanalytics_reporting' => 'class-googleanalytics-reporting',
+				'yoast_googleanalytics_reporting' => 'class-googleanalytics-reporting',
 				'yoast_google_analytics_client'       => 'class-google-analytics-client',
 			);
 

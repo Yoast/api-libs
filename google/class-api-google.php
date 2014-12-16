@@ -58,16 +58,16 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 				'yoast_google_cacheparser'     => 'io/Google_CacheParser',
 
 				// Requests
-				'yoast_httprequest'            => 'io/Google_HttpRequest',
-				'yoast_httpstream_io'          => 'io/Google_HttpStreamIO',
+				'yoast_google_httprequest'     => 'io/Google_HttpRequest',
+				'yoast_google_httpstream_io'   => 'io/Google_HttpStreamIO',
 				'yoast_google_rest'            => 'io/Google_REST',
 
 				// Wordpress
-				'yoast_wp_io'                  => 'io/Google_WPIO',
-				'yoast_wp_cache'               => 'cache/Google_WPCache',
+				'yoast_google_wpio'            => 'io/Google_WPIO',
+				'yoast_google_wpcache'         => 'cache/Google_WPCache',
 
 				// REPLACE ME!
-				'yoast_curl_io'                => 'io/Google_CurlIO',
+				'yoast_google_curlio'          => 'io/Google_CurlIO',
 			);
 
 			if ( ! empty( $oauth_files[$class_name] ) ) {
