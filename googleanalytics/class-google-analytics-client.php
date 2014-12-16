@@ -1,6 +1,6 @@
 <?php
 
-class Yoast_Google_Analytics_Client extends Google_Client {
+class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 
 	protected $http_response_code;
 
