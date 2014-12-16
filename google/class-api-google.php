@@ -23,9 +23,9 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 		/**
 		 * Autoload the API Google class
 		 */
-		private function autoload_api_google_files( $classname ) {
+		private function autoload_api_google_files( $class_name ) {
 			$path        = dirname( __FILE__ );
-			$classname   = strtolower( $classname );
+			$classname   = strtolower( $class_name );
 			$oauth_files = array(
 				// Main requires
 				'yoast_google_client'          => 'Google_Client',
@@ -68,9 +68,9 @@ if ( ! class_exists( 'Yoast_Api_Google' ) ) {
 				'yoast_curl_io'                => 'io/Google_CurlIO',
 			);
 
-			if ( ! empty( $oauth_files[$classname] ) ) {
-				if ( file_exists( $path . '/' . $oauth_files[$classname] . '.php' ) ) {
-					require_once( $path . '/' . $oauth_files[$classname] . '.php' );
+			if ( ! empty( $oauth_files[$class_name] ) ) {
+				if ( file_exists( $path . '/' . $oauth_files[$class_name] . '.php' ) ) {
+					require_once( $path . '/' . $oauth_files[$class_name] . '.php' );
 				}
 
 			}
