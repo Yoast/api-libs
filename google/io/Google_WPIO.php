@@ -18,8 +18,6 @@
 /**
  * WP based implementation of apiIO.
  *
- * @author Chris Chabot <chabotc@google.com>
- * @author Chirag Shah <chirags@google.com>
  */
 
 require_once 'Google_CacheParser.php';
@@ -31,17 +29,10 @@ class Google_WPIO extends Google_IO {
 		'te', 'trailers', 'transfer-encoding', 'upgrade');
 
 	/**
-	 * Check for cURL availability.
-	 */
-	public function __construct() {
-
-	}
-
-	/**
 	 * Perform an authenticated / signed apiHttpRequest.
 	 * This function takes the apiHttpRequest, calls apiAuth->sign on it
 	 * (which can modify the request in what ever way fits the auth mechanism)
-	 * and then calls apiCurlIO::makeRequest on the signed request
+	 * and then calls apiWPIO::makeRequest on the signed request
 	 *
 	 * @param Google_HttpRequest $request
 	 * @return Google_HttpRequest The resulting HTTP response including the
@@ -58,7 +49,6 @@ class Google_WPIO extends Google_IO {
 	 * @param Google_HttpRequest $request the http request to be executed
 	 * @return Google_HttpRequest http request with the response http code, response
 	 * headers and response body filled in
-	 * @throws Google_IOException on curl or IO error
 	 */
 	public function makeRequest(Google_HttpRequest $request) {
 
@@ -119,17 +109,13 @@ class Google_WPIO extends Google_IO {
 		$this->setCachedRequest($request);
 		// And finally return it
 
-
-		/**/
 		return $request;
 	}
 
 	/**
 	 * Set options that update default behavior.
-	 * The list of accepted options are:
-	 * {@link http://php.net/manual/en/function.curl-setopt.php]
 	 *
-	 * @param array $optParams Multiple options used by a cURL session.
+	 * @param array $optParams Multiple options used by a session.
 	 */
 	public function setOptions($optParams) {
 
