@@ -1,9 +1,5 @@
 <?php
 
-if ( ! class_exists( 'Google_Client' ) ) {
-	require_once( WPSEO_PREMIUM_PATH . 'classes/google/Google_Client.php' );
-}
-
 class Yoast_Google_Analytics_Client extends Google_Client {
 
 	protected $http_response_code;
