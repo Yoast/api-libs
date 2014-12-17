@@ -84,7 +84,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 					}
 				}
 			} catch(Exception $e) {
-				
+
 			}
 		}
 	}
@@ -158,7 +158,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 	 * @param $refresh_token
 	 */
 	public function save_refresh_token( $refresh_token ) {
-		update_option( self::OPTION_REFRESH_TOKEN, $refresh_token );
+		update_option( self::OPTION_REFRESH_TOKEN, trim( $refresh_token ) );
 	}
 
 	/**
