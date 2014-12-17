@@ -84,7 +84,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 					}
 				}
 			} catch(Exception $e) {
-				$this->save_refresh_token('');
+				
 			}
 		}
 	}
