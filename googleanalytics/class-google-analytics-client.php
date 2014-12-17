@@ -99,7 +99,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 	 * @return bool
 	 */
 	public function authenticate_client( $authorization_code = null ) {
-		static $attempts;
+		static $has_retried;
 
 		// Authenticate client
 		try {
@@ -122,8 +122,8 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 			}
 		} catch ( Yoast_Google_AuthException $exception ) {
 			// If there aren't any attempts before, try again and set attempts on true, to prevent further attempts
-			if ( empty( $attempts ) ) {
-				$attempts = true;
+			if ( empty( $has_retried ) ) {
+				$has_retried = true;
 
 				return $this->authenticate_client( $authorization_code );
 			}
