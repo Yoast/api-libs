@@ -71,7 +71,7 @@ class Yoast_Google_WPIO extends Yoast_Google_IO {
 			'sslverify'  => false,
 		);
 
-		$curl_version = Yoast_GA_Utils::get_curl_version();
+		$curl_version = $this->get_curl_version();
 		if( $curl_version !== false ) {
 			if ( version_compare( $curl_version, '7.19.0', '<=' ) && version_compare( $curl_version, '7.19.8', '>' ) ) {
 				add_filter( 'http_api_transports', array( $this, 'filter_curl_from_transports' ) );
@@ -143,6 +143,23 @@ class Yoast_Google_WPIO extends Yoast_Google_IO {
 	 */
 	public function setOptions( $optParams ) {
 
+	}
+
+	/**
+	 * Get the current curl verison if curl is installed
+	 *
+	 * @return bool|string
+	 */
+	public function get_curl_version() {
+		if ( function_exists( 'curl_version' ) ) {
+			$curl = curl_version();
+
+			if ( isset( $curl['version'] ) ) {
+				return $curl['version'];
+			}
+		}
+
+		return false;
 	}
 
 }
