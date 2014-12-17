@@ -19,12 +19,11 @@
  * WP based implementation of apiIO.
  *
  */
-
 class Yoast_Google_WPIO extends Yoast_Google_IO {
-	private static $ENTITY_HTTP_METHODS = array("POST" => null, "PUT" => null);
+	private static $ENTITY_HTTP_METHODS = array( "POST" => null, "PUT" => null );
 	private static $HOP_BY_HOP = array(
 		'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
-		'te', 'trailers', 'transfer-encoding', 'upgrade');
+		'te', 'trailers', 'transfer-encoding', 'upgrade' );
 
 	/**
 	 * Perform an authenticated / signed apiHttpRequest.
@@ -33,51 +32,63 @@ class Yoast_Google_WPIO extends Yoast_Google_IO {
 	 * and then calls apiWPIO::makeRequest on the signed request
 	 *
 	 * @param Yoast_Google_HttpRequest $request
+	 *
 	 * @return Yoast_Google_HttpRequest The resulting HTTP response including the
 	 * responseHttpCode, responseHeaders and responseBody.
 	 */
-	public function authenticatedRequest(Yoast_Google_HttpRequest $request) {
-		$request = Yoast_Google_Client::$auth->sign($request);
-		return $this->makeRequest($request);
+	public function authenticatedRequest( Yoast_Google_HttpRequest $request ) {
+		$request = Yoast_Google_Client::$auth->sign( $request );
+
+		return $this->makeRequest( $request );
 	}
 
 	/**
 	 * Execute a apiHttpRequest
 	 *
 	 * @param Yoast_Google_HttpRequest $request the http request to be executed
+	 *
 	 * @return Yoast_Google_HttpRequest http request with the response http code, response
 	 * headers and response body filled in
 	 */
-	public function makeRequest(Yoast_Google_HttpRequest $request) {
+	public function makeRequest( Yoast_Google_HttpRequest $request ) {
 
 		// First, check to see if we have a valid cached version.
-		$cached = $this->getCachedRequest($request);
-		if ($cached !== false) {
-			if (!$this->checkMustRevaliadateCachedRequest($cached, $request)) {
+		$cached = $this->getCachedRequest( $request );
+		if ( $cached !== false ) {
+			if ( ! $this->checkMustRevaliadateCachedRequest( $cached, $request ) ) {
 				return $cached;
 			}
 		}
 
-		if (array_key_exists($request->getRequestMethod(),
-			self::$ENTITY_HTTP_METHODS)) {
-			$request = $this->processEntityRequest($request);
+		if ( array_key_exists( $request->getRequestMethod(),
+			self::$ENTITY_HTTP_METHODS ) ) {
+			$request = $this->processEntityRequest( $request );
 		}
 
 		$params = array(
-			'user-agent' => $request->getUserAgent()
+			'user-agent' => $request->getUserAgent(),
+			'timeout'    => 30,
+			'sslverify'  => false,
 		);
 
-		if ($request->getPostBody()) {
+		$curl_version = $this->get_curl_version();
+		if( $curl_version !== false ) {
+			if ( version_compare( $curl_version, '7.19.0', '<=' ) && version_compare( $curl_version, '7.19.8', '>' ) ) {
+				add_filter( 'http_api_transports', array( $this, 'filter_curl_from_transports' ) );
+			}
+		}
+
+		if ( $request->getPostBody() ) {
 			$params['body'] = $request->getPostBody();
 		}
 
 		$requestHeaders = $request->getRequestHeaders();
-		if ($requestHeaders && is_array($requestHeaders)) {
+		if ( $requestHeaders && is_array( $requestHeaders ) ) {
 			$params['headers'] = $requestHeaders;
 		}
 
 
-		switch( $request->getRequestMethod() ) {
+		switch ( $request->getRequestMethod() ) {
 			case 'POST' :
 				$response = wp_remote_post( $request->getUrl(), $params );
 				break;
@@ -91,23 +102,38 @@ class Yoast_Google_WPIO extends Yoast_Google_IO {
 		$respHttpCode    = wp_remote_retrieve_response_code( $response );
 		$responseHeaders = wp_remote_retrieve_headers( $response );
 
-		if ($respHttpCode == 304 && $cached) {
+		if ( $respHttpCode == 304 && $cached ) {
 			// If the server responded NOT_MODIFIED, return the cached request.
-			$this->updateCachedRequest($cached, $responseHeaders);
+			$this->updateCachedRequest( $cached, $responseHeaders );
+
 			return $cached;
 		}
 
 		// Fill in the apiHttpRequest with the response values
-		$request->setResponseHttpCode($respHttpCode);
-		$request->setResponseHeaders($responseHeaders);
+		$request->setResponseHttpCode( $respHttpCode );
+		$request->setResponseHeaders( $responseHeaders );
 
-		$request->setResponseBody($responseBody);
+		$request->setResponseBody( $responseBody );
 		// Store the request in cache (the function checks to see if the request
 		// can actually be cached)
-		$this->setCachedRequest($request);
+		$this->setCachedRequest( $request );
+
 		// And finally return it
 
 		return $request;
+	}
+
+	/**
+	 * Remove Curl from the transport
+	 *
+	 * @param $transports
+	 *
+	 * @return mixed
+	 */
+	public function filter_curl_from_transports( $transports ) {
+		unset( $transports['curl'] );
+
+		return $transports;
 	}
 
 	/**
@@ -115,8 +141,25 @@ class Yoast_Google_WPIO extends Yoast_Google_IO {
 	 *
 	 * @param array $optParams Multiple options used by a session.
 	 */
-	public function setOptions($optParams) {
+	public function setOptions( $optParams ) {
 
+	}
+
+	/**
+	 * Get the current curl verison if curl is installed
+	 *
+	 * @return bool|string
+	 */
+	public function get_curl_version() {
+		if ( function_exists( 'curl_version' ) ) {
+			$curl = curl_version();
+
+			if ( isset( $curl['version'] ) ) {
+				return $curl['version'];
+			}
+		}
+
+		return false;
 	}
 
 }

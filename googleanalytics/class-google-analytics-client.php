@@ -13,6 +13,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 
 	/**
 	 * Initialize the config and refresh the token
+	 *
 	 * @param array $config
 	 */
 	public function __construct( $config ) {
@@ -58,7 +59,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 		// Set our settings
 		$this->setRedirectUri( $config['redirect_uri'] );
 		$this->setScopes( $config['scopes'] );
-		$this->setAccessType('offline');
+		$this->setAccessType( 'offline' );
 	}
 
 	/**
@@ -83,8 +84,8 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 						$this->setAccessToken( $response->access_token );
 					}
 				}
-			} catch(Exception $e) {
-				$this->save_refresh_token('');
+			} catch ( Exception $e ) {
+
 			}
 		}
 	}
@@ -98,6 +99,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 	 * @return bool
 	 */
 	public function authenticate_client( $authorization_code = null ) {
+		static $has_retried;
 
 		// Authenticate client
 		try {
@@ -107,7 +109,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 			$response = $this->getAccessToken();
 
 			// Check if there is a response body
-			if ( !empty( $response ) ) {
+			if ( ! empty( $response ) ) {
 				$response = json_decode( $response );
 
 				if ( is_object( $response ) ) {
@@ -119,8 +121,15 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 
 			}
 		} catch ( Yoast_Google_AuthException $exception ) {
-			return false;
+			// If there aren't any attempts before, try again and set attempts on true, to prevent further attempts
+			if ( empty( $has_retried ) ) {
+				$has_retried = true;
+
+				return $this->authenticate_client( $authorization_code );
+			}
 		}
+
+		return false;
 	}
 
 	/**
@@ -158,7 +167,7 @@ class Yoast_Google_Analytics_Client extends Yoast_Google_Client {
 	 * @param $refresh_token
 	 */
 	public function save_refresh_token( $refresh_token ) {
-		update_option( self::OPTION_REFRESH_TOKEN, $refresh_token );
+		update_option( self::OPTION_REFRESH_TOKEN, trim( $refresh_token ) );
 	}
 
 	/**
