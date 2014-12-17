@@ -64,7 +64,8 @@ class Yoast_Google_WPIO extends Yoast_Google_IO {
 		}
 
 		$params = array(
-			'user-agent' => $request->getUserAgent()
+			'user-agent' => $request->getUserAgent(),
+			'timeout'    => 30,
 		);
 
 		if ($request->getPostBody()) {
