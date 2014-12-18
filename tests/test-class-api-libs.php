@@ -22,7 +22,7 @@ class Yoast_Api_Libs_Test extends GA_UnitTestCase {
 	public function test_get_api_libs() {
 		$total_active = count( Yoast_Api_Libs::get_api_libs() );
 
-		$this->assertEquals( $total_active, $this->loaded_api_libs );
+		$this->assertEquals( $this->loaded_api_libs, 1 );
 	}
 
 }
