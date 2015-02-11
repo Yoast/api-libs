@@ -3,7 +3,7 @@
     "description": "Shared API libraries for Yoast projects.",
     "keywords"   : ["wordpress"],
     "homepage"   : "https://github.com/Yoast/api-libs",
-    "license"    : "GPL-2.0+",
+    "license"    : "GPL-3.0",
     "authors"    : [
         {
             "name"    : "Team Yoast",
