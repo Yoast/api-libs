@@ -2,8 +2,6 @@
 
 class Yoast_Api_Googleanalytics {
 
-	public $options;
-
 	/**
 	 * This class will be loaded when someone calls the API library with the Google analytics module
 	 */
