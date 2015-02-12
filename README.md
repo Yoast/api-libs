@@ -1,2 +1,2 @@
-Yoast API libraries (Libs)
+Yoast API libraries
 ==========================
