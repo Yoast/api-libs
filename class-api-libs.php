@@ -11,7 +11,6 @@
  * - Create file 'class-api-oauth.php'
  * - Class name should be 'Yoast_Api_Oauth'
  */
-
 class Yoast_Api_Libs {
 
 	/**
@@ -77,6 +76,11 @@ class Yoast_Api_Libs {
 		$classname       = 'Yoast_Api_' . ucfirst( $name );
 		$classpath       = 'class-api-' . $name . '.php';
 		$path_to_require = dirname( __FILE__ ) . '/' . $name . '/' . $classpath;
+
+		// Check if the API Libs was already registered
+		if ( isset( self::$api_libs[$name] ) ) {
+			return true;
+		}
 
 		self::$api_libs[$name] = array(
 			'name'            => $name,
