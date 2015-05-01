@@ -86,6 +86,9 @@ class Yoast_Google_WPIO extends Yoast_Google_IO {
 			$params['headers'] = $requestHeaders;
 		}
 
+		// There might be some problems with decompressing, so we prevent this by setting the param to false
+		$params['decompress'] = false;
+
 
 		switch ( $request->getRequestMethod() ) {
 			case 'POST' :
