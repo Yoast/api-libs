@@ -29,6 +29,7 @@ class Yoast_Api_Google {
 		$oauth_files = array(
 			// Main requires
 			'yoast_google_client'          => 'Google_Client',
+			'yoast_api_google_client'      => 'class-api-google-client',
 
 			// Requires in classes
 			'yoast_google_model'           => 'service/Google_Model',
