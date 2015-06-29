@@ -140,6 +140,18 @@ class Yoast_Api_Google_Client extends Yoast_Google_Client {
 	}
 
 	/**
+	 * Check if user is authenticated
+	 *
+	 * @return bool
+	 */
+	public function is_authenticated() {
+		$has_refresh_token    = ( $this->get_refresh_token() !== '' );
+		$access_token_expired = $this->access_token_expired();
+
+		return $has_refresh_token && ! $access_token_expired;
+	}
+
+	/**
 	 * Initialize the config, will merge given config with default config to be sure all settings are available
 	 *
 	 * @param array $config
