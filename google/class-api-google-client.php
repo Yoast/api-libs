@@ -15,11 +15,6 @@ class Yoast_Api_Google_Client extends Yoast_Google_Client {
 	protected $option_access_token;
 
 	/**
-	 * @var array
-	 */
-	protected $default_config = array();
-
-	/**
 	 * @var string
 	 */
 	protected $api_url;
@@ -164,8 +159,6 @@ class Yoast_Api_Google_Client extends Yoast_Google_Client {
 	 * @param array $config
 	 */
 	protected function init_config( array $config ) {
-		$config = array_merge( $config, $this->default_config );
-
 		if ( ! empty( $config['application_name'] ) ) {
 			$this->setApplicationName( $config['application_name'] );
 		}
