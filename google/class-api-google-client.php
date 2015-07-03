@@ -92,11 +92,12 @@ class Yoast_Api_Google_Client extends Yoast_Google_Client {
 	 * Doing a request to the API
 	 *
 	 * @param string $target_request_url
+	 * @param bool   $decode_response
 	 * @param string $request_method
 	 *
 	 * @return array
 	 */
-	public function do_request( $target_request_url, $request_method = 'GET' ) {
+	public function do_request( $target_request_url, $decode_response = false, $request_method = 'GET' ) {
 		// Get response.
 		$response = $this->getIo()->authenticatedRequest(
 			new Yoast_Google_HttpRequest( $this->api_url . $target_request_url, $request_method )
@@ -104,6 +105,10 @@ class Yoast_Api_Google_Client extends Yoast_Google_Client {
 
 		// Storing the response code.
 		$this->http_response_code = $response->getResponseHttpCode();
+
+		if ( $decode_response ) {
+			return $this->decode_response( $response );
+		}
 
 		return $response;
 	}
