@@ -32,11 +32,18 @@ class Yoast_Api_Google_Client extends Yoast_Google_Client {
 	/**
 	 * Initialize the config and refresh the token
 	 *
-	 * @param array $config
+	 * @param array  $config
+	 * @param string $option_prefix
+	 * @param string $api_url
 	 */
-	public function __construct( $config ) {
+	public function __construct( $config, $option_prefix, $api_url = '' ) {
 
 		parent::__construct();
+
+		$this->option_refresh_token = $option_prefix . '-refresh_token';
+		$this->option_access_token  = $option_prefix . '-access_token';
+
+		$this->api_url = $api_url;
 
 		// Initialize the config to set all properties properly.
 		$this->init_config( $config );
