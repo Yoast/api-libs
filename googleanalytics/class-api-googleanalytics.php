@@ -26,7 +26,6 @@ class Yoast_Api_Googleanalytics {
 		$class_name  = strtolower( $class_name );
 		$oauth_files = array(
 			'yoast_googleanalytics_reporting' => 'class-googleanalytics-reporting',
-			'yoast_google_analytics_client'   => 'class-google-analytics-client',
 		);
 
 		if ( ! empty( $oauth_files[$class_name] ) ) {
