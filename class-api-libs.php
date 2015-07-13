@@ -25,13 +25,14 @@ class Yoast_Api_Libs {
 	 * @param string $minimal_required_version
 	 */
 	public function __construct( $minimal_required_version )  {
-
-		if ( version_compare( $minimal_required_version, $this->version, '>' )) {
+		if ( version_compare( $this->version, $minimal_required_version, '>' )) {
 			$this->load_google();
 		}
-
 	}
 
+	/**
+	 * Loading the google api library which will set the autoloader
+	 */
 	private function load_google() {
 		if ( ! class_exists('Yoast_Api_Google', false) ) {
 			// Require the file
