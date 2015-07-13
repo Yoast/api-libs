@@ -16,16 +16,20 @@ class Yoast_Api_Libs {
 	/**
 	 * Current version number of the API-libs
 	 */
-	const version = '1.1';
+	const version = '2.0';
 
 	/**
 	 * Check if minimal required version is met.
 	 *
 	 * @param string $minimal_required_version
+	 *
+	 * @throws Exception
 	 */
 	public function __construct( $minimal_required_version )  {
-		if ( version_compare( self::version, $minimal_required_version, '>' )) {
-			$this->load_google();
+		$this->load_google();
+
+		if ( ! version_compare( self::version, $minimal_required_version, '>=' )) {
+			throw new Exception( 'required_version' );
 		}
 	}
 
