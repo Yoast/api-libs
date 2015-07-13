@@ -15,9 +15,8 @@ class Yoast_Api_Libs {
 
 	/**
 	 * Current version number of the API-libs
-	 * @var string
 	 */
-	private $version = '1.1';
+	const version = '1.1';
 
 	/**
 	 * Check if minimal required version is met.
@@ -25,7 +24,7 @@ class Yoast_Api_Libs {
 	 * @param string $minimal_required_version
 	 */
 	public function __construct( $minimal_required_version )  {
-		if ( version_compare( $this->version, $minimal_required_version, '>' )) {
+		if ( version_compare( self::version, $minimal_required_version, '>' )) {
 			$this->load_google();
 		}
 	}
