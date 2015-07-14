@@ -42,6 +42,7 @@ class Yoast_Api_Google {
 			'yoast_google_cache'           => 'google/cache/Google_Cache',
 
 			// Requests
+			'yoast_google_cacheparser'     => 'google/io/Google_CacheParser',
 			'yoast_google_io'              => 'google/io/Google_IO',
 			'yoast_google_httprequest'     => 'google/io/Google_HttpRequest',
 			'yoast_google_rest'            => 'google/io/Google_REST',
